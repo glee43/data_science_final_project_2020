@@ -1,8 +1,5 @@
 import sqlite3
 import csv
-import pandas as pd
-from pandas import DataFrame
-
 
 '''
     Define the field the population object has in the data
