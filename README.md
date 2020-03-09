@@ -4,13 +4,13 @@
 
 ## Repo Structure
 
-data: contains the raw data format
+### data [folder]: contains the raw data format
 
-scripts: contains scripts for loading data
+### scripts [folder]: contains scripts for loading data
 
 -   population.py : reads in US population data into the population table in data.db
 
-data.db: the actual sqlite database
+### data.db [database]: the actual sqlite database
 
 -   population: conatins the fields
     >
