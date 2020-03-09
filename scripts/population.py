@@ -36,8 +36,6 @@ conn.commit()
 
 # get rid of the revision field and returns a float
 def getFloat(field):
-    # print("word")
-    # print(field)
 
     # when the data doesn't exist
     if "(X)" in field:
@@ -45,12 +43,8 @@ def getFloat(field):
 
     if "(" in field:
         field = field.split("(")
-        # print(field)
-        # print(field[0])
         field = float(field[0])
-    # when the data doesn't exist
-    if "(X)" in field:
-        return -1.0
+
     return field
 
 
@@ -78,7 +72,7 @@ def read_data(filename):
             conn.commit()
 
 
-read_clients = read_data('../data/population.csv')
+read_data('../data/population.csv')
 # Insert the values from the csv file into the table 'CLIENTS'
 
-print("finished")
+print("Finished reading data from population.csv to the database.")
