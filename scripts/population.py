@@ -2,7 +2,7 @@ import sqlite3
 import csv
 
 '''
-    Define the field the population object has in the data
+    Creates the population table and add it to data.db
 '''
 
 conn = sqlite3.connect('../data.db')
@@ -33,7 +33,6 @@ conn.commit()
 
 # get rid of the revision field and returns a float
 def getFloat(field):
-
     # when the data doesn't exist
     if "(X)" in field:
         return -1
@@ -70,6 +69,5 @@ def read_data(filename):
 
 
 read_data('../data/population.csv')
-# Insert the values from the csv file into the table 'CLIENTS'
 
 print("Finished reading data from population.csv to the database.")
