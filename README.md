@@ -12,6 +12,8 @@
 
 ### data.db [database]: the actual sqlite database
 
+\*note since the gunviolence data is so large (over 200,000 incidences) unzip the data in data and run gunviolence.py to populate data.db
+
 -   gunviolence: contains
 
 | field                       | type                            | description                                                                   | required? |
