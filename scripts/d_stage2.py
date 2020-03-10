@@ -225,7 +225,11 @@ class Scraper(object):
 def scrape_incidents(df, chrome_options):
     browser = webdriver.Chrome(options=chrome_options)
 
-    for i in range(1):
+    new_df = pd.DataFrame([], columns=[*df.columns, *ALL_FIELD_NAMES])
+    print(new_df)
+
+    for i in range(2):
+        sleep(1)
         # Unpack the row.
         row = df.loc[i]
         context = IncidentContext(
@@ -260,20 +264,25 @@ def scrape_incidents(df, chrome_options):
         # 3. Add incident fields to the row.
         print(all_fields)
         print(_normalize(all_fields))
-        # def field_name(lst):
-        #     assert len(set([field.name for field in lst])) == 1
-        #     return lst[0].name
+        fields = _normalize(all_fields)
 
-        # def field_values(lst):
-        #     return [field.value for field in lst]
+        # Temporarily suppress Pandas' SettingWithCopyWarning
+        pd.options.mode.chained_assignment = None
+        try:
+            print(row)
+            for field_name, field_values in fields:
+                # assert row.shape[0] == len(field_values)
+                row[field_name] = field_values
 
-        # subset = df if predicate is None else df.loc[predicate]
-        # if len(subset) == 0:
-        #     # No work to do
-        #     return df
+            print(row)
+            print(row.index)
+            print(new_df.columns)
+            new_df = new_df.append(row)
+        finally:
+            pd.options.mode.chained_assignment = 'warn'
 
-    sleep(30)
-    pass
+    sleep(3)
+    return new_df
 
 
 async def main():
@@ -286,9 +295,10 @@ async def main():
     if args.should_use_headless:
         options.add_argument('--headless')
 
-    scrape_incidents(df, options)
+    new_df = scrape_incidents(df, options)
 
-    write_output(args, df)
+    write_output(args, new_df)
+    print('Wrote.')
 
 
 if __name__ == '__main__':
