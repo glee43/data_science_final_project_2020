@@ -28,6 +28,34 @@ SCHEMA = {
     'n_guns_involved': np.float64,
 }
 
+ALL_FIELD_NAMES = sorted([
+    'latitude',
+    'longitude',
+    'location_description',
+
+    'participant_type',
+    'participant_name',
+    'participant_age',
+    'participant_age_group',
+    'participant_gender',
+    'participant_status',
+    'participant_relationship',
+
+    'incident_characteristics',
+
+    'notes',
+
+    'n_guns_involved',
+    'gun_type',
+    'gun_stolen',
+
+    'sources',
+
+    'congressional_district',
+    'state_senate_district',
+    'state_house_district'
+])
+
 # —————
 # Utility functions
 
@@ -94,7 +122,7 @@ def write_output(args, df) -> None:
 
 def _snakify_key(key, prefix=''):
     """
-    e.g. snakify_key('Age Group', prefix='participant') -> 'participant_age_group'
+    e.g. snakify_key('Age Group', prefix='participant_') -> 'participant_age_group'
     """
     return prefix + key.lower().replace(' ', '_')
 
@@ -114,7 +142,26 @@ def _stringify_dict(d, dictsep='::', listsep='||'):
 
 
 def _normalize(fields: List[Field]) -> List[Field]:
-    return fields
+    # Ensure that the fields are alphabetically ordered by field name.
+    fields = sorted(fields, key=lambda f: f.name)
+
+    # Validate field names.
+    field_names_and_values = [field for field in zip(*fields)]
+    field_names = set(field_names_and_values[0])
+
+    unexpected_field_names = field_names - set(ALL_FIELD_NAMES)
+    assert len(unexpected_field_names) == 0, f'Unexpected field names: {unexpected_field_names}'
+
+    # Add dummy fields for missing field names.
+    i = 0
+    for name in ALL_FIELD_NAMES:
+        if name not in field_names:
+            dummy = Field(name, None)
+            fields.insert(i, dummy)
+        i += 1
+
+    # Since `fields` has a known length, it's more appropriate to use a tuple.
+    return tuple(fields)
 
 
 class Scraper(object):
@@ -165,7 +212,7 @@ class Scraper(object):
             linegroup = linegroups[i]
             kvpairs = [line.split(':') for line in linegroup]
             kvpairs = [(k.strip(), v.strip()) for k, v in kvpairs]
-            kvpairs = [(_snakify_key(k), v) for k, v in kvpairs]
+            kvpairs = [(_snakify_key(k, prefix='participant_'), v) for k, v in kvpairs]
             for k, v in kvpairs:
                 person_fields[k][i] = v
 
@@ -197,8 +244,6 @@ def scrape_incidents(df, chrome_options):
         html = browser.page_source
         soup = BeautifulSoup(html, features='html5lib')
         block_system_main = soup.find(id='block-system-main')
-        content_divs = [
-            block for block in block_system_main.contents if block.name == 'div']
 
         def find_content_div(title):
             h2 = block_system_main.find('h2', string=title)
@@ -206,18 +251,15 @@ def scrape_incidents(df, chrome_options):
 
         location_fields = Scraper.extract_location_fields(find_content_div('Location'), context)
         participant_fields = Scraper.extract_participant_fields(find_content_div('Participants'))
-        # for content_div in content_divs:
-        #     if content_div.h2.text == 'District':
-        #         print(content_div)
 
         all_fields = [
             *location_fields,
             *participant_fields,
         ]
 
-        print(all_fields)
-
         # 3. Add incident fields to the row.
+        print(all_fields)
+        print(_normalize(all_fields))
         # def field_name(lst):
         #     assert len(set([field.name for field in lst])) == 1
         #     return lst[0].name
