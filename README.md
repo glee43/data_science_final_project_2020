@@ -12,7 +12,7 @@
 
 ### data.db [database]: the actual sqlite database
 
--   population: conatins the fields
+-   population: contains the fields
     >
           state varchar(100),
           target_geo_id_1 varchar(100) primary key,
