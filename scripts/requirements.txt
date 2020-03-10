@@ -1,0 +1,7 @@
+aiohttp
+beautifulsoup4
+numpy
+pandas
+python-dateutil
+selenium
+html5lib
