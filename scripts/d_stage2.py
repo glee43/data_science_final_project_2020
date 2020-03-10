@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Tuple, Union, cast
 import re
 import sys
 from time import sleep, time
+from urllib.parse import parse_qs, urlparse
 
 import selenium_utils
 
@@ -102,7 +103,6 @@ def parse_args() -> Namespace:
 
 
 def load_input(args):
-    print(args.input_fname)
     return pd.read_csv(
         args.input_fname,
         dtype=SCHEMA,
@@ -118,6 +118,26 @@ def write_output(args, df) -> None:
         float_format='%g',
         encoding='utf-8',
     )
+
+
+def _supplement_next_url(next_url: str, current_url: str) -> str:
+    """
+    Arguments:
+        next_url — Must not have any query params.
+
+    If current_url has any session tokens as query params, returns next_url with those session 
+    tokens included.
+    """
+    question_mark_idx = current_url.find('?')
+
+    if question_mark_idx == -1:
+        new_next_url = next_url
+    else:
+        new_next_url = next_url.replace('http://', 'https://') + current_url[question_mark_idx:]
+
+    print(new_next_url)
+    print()
+    return new_next_url
 
 
 def _snakify_key(key, prefix=''):
@@ -219,8 +239,6 @@ class Scraper(object):
         for field_name, field_values in person_fields.items():
             yield Field(field_name, _stringify_dict(field_values))
 
-        # print(person_fields)
-
 
 def scrape_incidents(df, chrome_options):
     browser = webdriver.Chrome(options=chrome_options)
@@ -228,7 +246,7 @@ def scrape_incidents(df, chrome_options):
     new_df = pd.DataFrame([], columns=[*df.columns, *ALL_FIELD_NAMES])
     print(new_df)
 
-    for i in range(2):
+    for i in range(3):
         sleep(1)
         # Unpack the row.
         row = df.loc[i]
@@ -237,7 +255,11 @@ def scrape_incidents(df, chrome_options):
             city_or_county=row['city_or_county'],
             state=row['state'],
         )
+
+        # Get incident URL.
         url = row['incident_url']
+        if browser.current_url.find('http') != -1:
+            url = _supplement_next_url(url, browser.current_url)
 
         print('Querying')
         browser.get(url)
@@ -262,21 +284,15 @@ def scrape_incidents(df, chrome_options):
         ]
 
         # 3. Add incident fields to the row.
-        print(all_fields)
-        print(_normalize(all_fields))
         fields = _normalize(all_fields)
 
         # Temporarily suppress Pandas' SettingWithCopyWarning
         pd.options.mode.chained_assignment = None
         try:
-            print(row)
             for field_name, field_values in fields:
                 # assert row.shape[0] == len(field_values)
                 row[field_name] = field_values
 
-            print(row)
-            print(row.index)
-            print(new_df.columns)
             new_df = new_df.append(row)
         finally:
             pd.options.mode.chained_assignment = 'warn'
@@ -289,7 +305,6 @@ async def main():
     args = parse_args()
 
     df = load_input(args)
-    print(df)
 
     options = webdriver.ChromeOptions()
     if args.should_use_headless:
