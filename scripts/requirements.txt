@@ -5,3 +5,7 @@ pandas
 python-dateutil
 selenium
 html5lib
+
+# DEV environment requirements
+pylint
+autopep8

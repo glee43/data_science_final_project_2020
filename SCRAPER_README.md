@@ -1,23 +1,23 @@
-## Author
+# Scraping Readme
 
-* David Hong
+### Author
 
-## Contents
-
-* I've made some changes.
-
-## Relevant Scripts
-
-* `scripts/`:
-  * `stage1.py`
-  * `d_stage2.py`
-  * `stage3.py`
+- David Hong
 
 ## Setup
 
-#### Req. For All
+### Step 1
 
-Set up your virtualenv for the first time:
+Set up your virtualenv for the first time in one of two ways:
+
+#### Option 1
+
+```zsh
+./setup_scraping.sh
+```
+
+#### Option 2
+
 ```zsh
 python3 -m pip install virtualenv
 python3 -m virtualenv venv
@@ -25,18 +25,25 @@ source venv/bin/activate
 python3 -m pip install -r scripts/requirements.txt
 ```
 
-#### Req. For Stage 2
+### Step 1
 
-* Add `chromedriver` to PATH.
+- Add `chromedriver` to PATH.
 
-## Usage Details
+## Usage
+
+### Relevant Scripts
+
+- `scripts/`:
+  - `stage1.py`
+  - `d_stage2.py`
+  - `stage3.py`
 
 ### Stage 1
 
 Example input:
 
 ```zsh
-python3 scripts/stage1.py "July 4, 2018" "July 5, 2018" ./intermediate/s1.csv  
+python3 scripts/stage1.py "July 4, 2018" "July 5, 2018" ./intermediate/s1.csv
 ```
 
 ### Stage 2

@@ -10,7 +10,6 @@ import sys
 from time import sleep, time
 
 import selenium_utils
-from log_utils import log_first_call
 
 import numpy as np
 import pandas as pd
@@ -75,8 +74,6 @@ def parse_args() -> Namespace:
 
 
 def load_input(args):
-    log_first_call()
-
     print(args.input_fname)
     return pd.read_csv(
         args.input_fname,
@@ -87,8 +84,6 @@ def load_input(args):
 
 
 def write_output(args, df) -> None:
-    log_first_call()
-
     df.to_csv(
         args.output_fname,
         index=False,
@@ -219,6 +214,8 @@ def scrape_incidents(df, chrome_options):
             *location_fields,
             *participant_fields,
         ]
+
+        print(all_fields)
 
         # 3. Add incident fields to the row.
         # def field_name(lst):
