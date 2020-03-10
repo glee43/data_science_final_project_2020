@@ -125,7 +125,7 @@ def _supplement_next_url(next_url: str, current_url: str) -> str:
     Arguments:
         next_url — Must not have any query params.
 
-    If current_url has any session tokens as query params, returns next_url with those session 
+    If current_url has any session tokens as query params, returns next_url with those session
     tokens included.
     """
     question_mark_idx = current_url.find('?')
@@ -145,6 +145,13 @@ def _snakify_key(key, prefix=''):
     e.g. snakify_key('Age Group', prefix='participant_') -> 'participant_age_group'
     """
     return prefix + key.lower().replace(' ', '_')
+
+
+def _stringify_list(lst, sep='||'):
+    violation = next((item for item in lst if sep in item), None)
+    assert violation is None, "List item {} contains the separator string {}".format(
+        repr(violation), repr(sep))
+    return sep.join(lst)
 
 
 def _stringify_dict(d, dictsep='::', listsep='||'):
@@ -239,6 +246,68 @@ class Scraper(object):
         for field_name, field_values in person_fields.items():
             yield Field(field_name, _stringify_dict(field_values))
 
+    @staticmethod
+    def extract_guns_involved_fields(div: Union[BeautifulSoup, None]):
+        if div is None:
+            return
+
+        # n_guns_involved
+        p_text = div.select_one('p').text
+        match = re.search(r'^([0-9]+)\s+guns?\s+involved.$', p_text)
+        assert match, "<p> text did not match expected pattern: {}".format(p_text)
+        n_guns_involved = int(match.group(1))
+        yield Field('n_guns_involved', n_guns_involved)
+
+        # List attributes
+        linegroups = [[li.text for li in ul.select('li')] for ul in div.select('ul')]
+        gun_fields = defaultdict(dict)
+
+        for i, linegroup in enumerate(linegroups):
+            linegroup = linegroups[i]
+            kvpairs = [line.split(':') for line in linegroup]
+            kvpairs = [(k.strip(), v.strip()) for k, v in kvpairs]
+            kvpairs = [(_snakify_key(k, prefix='gun_'), v) for k, v in kvpairs]
+            for k, v in kvpairs:
+                gun_fields[k][i] = v
+
+        for field_name, field_values in gun_fields.items():
+            yield Field(field_name, _stringify_dict(field_values))
+
+    @staticmethod
+    def extract_district_fields(div: Union[BeautifulSoup, None]):
+        if div is None:
+            return
+
+        # The text we want to scrape is orphaned (no direct parent element), so we can't get at it directly.
+        # Fortunately, each important line is followed by a <br> element, so we can use that to our advantage.
+        # NB: The orphaned text elements are of type 'NavigableString'
+        lines = [str(br.previousSibling).strip() for br in div.select('br')]
+        for line in lines:
+            kvpairs = line.split(':')
+            k, v = (kvpairs[0].strip(), kvpairs[1].strip())
+            k, v = (_snakify_key(k), v)
+            yield Field(k, v)
+
+    @staticmethod
+    def extract_incident_characteristics(content_div: Union[BeautifulSoup, None]):
+        if content_div is None:
+            return
+        return _stringify_list([li.text for li in content_div.select('li')])
+
+    @staticmethod
+    def extract_notes(div: Union[BeautifulSoup, None]):
+        if div is None:
+            return
+        return div.select_one('p').text
+
+    @staticmethod
+    def extract_sources(div: Union[BeautifulSoup, None]):
+        if div is None:
+            return None
+
+        anchors = [a for a in div.select('a') if a.text == a['href']]
+        return _stringify_list([a['href'] for a in anchors])
+
 
 def scrape_incidents(df, chrome_options):
     browser = webdriver.Chrome(options=chrome_options)
@@ -277,10 +346,27 @@ def scrape_incidents(df, chrome_options):
 
         location_fields = Scraper.extract_location_fields(find_content_div('Location'), context)
         participant_fields = Scraper.extract_participant_fields(find_content_div('Participants'))
+        guns_involved_fields = Scraper.extract_guns_involved_fields(
+            find_content_div('Guns Involved')
+        )
+        district_fields = Scraper.extract_district_fields(
+            find_content_div('District')
+        )
+
+        incident_characteristics = Scraper.extract_incident_characteristics(
+            find_content_div('Incident Characteristics')
+        )
+        notes = Scraper.extract_notes(find_content_div('Notes'))
+        sources = Scraper.extract_sources(find_content_div('Sources'))
 
         all_fields = [
             *location_fields,
             *participant_fields,
+            *guns_involved_fields,
+            *district_fields,
+            Field('incident_characteristics', incident_characteristics),
+            Field('notes', notes),
+            Field('sources', sources),
         ]
 
         # 3. Add incident fields to the row.
@@ -290,7 +376,6 @@ def scrape_incidents(df, chrome_options):
         pd.options.mode.chained_assignment = None
         try:
             for field_name, field_values in fields:
-                # assert row.shape[0] == len(field_values)
                 row[field_name] = field_values
 
             new_df = new_df.append(row)
