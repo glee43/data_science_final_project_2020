@@ -46,6 +46,12 @@ Example input:
 python3 scripts/stage1.py "July 4, 2018" "July 5, 2018" ./intermediate/s1.csv
 ```
 
+Or:
+
+```zsh
+python3 scripts/stage1.py "04-2018"
+```
+
 ### Stage 2
 
 Example input:
@@ -58,7 +64,17 @@ python3 scripts/d_stage2.py ./intermediate/s1.csv ./intermediate/s2.csv
 
 The script needs to be updated to incorporate Chrome and Selenium. This shouldn't be too hard. -->
 
-Stage 2 is all about accessing individual incident pages (ex: `http://www.gunviolencearchive.org/incident/1157396`.) As far as I can tell, once you get Selenium to get access to the page and bypass the protection, the script just has to do the exact same thing it was already doing.
+Stage 2 is all about accessing individual incident pages (ex: `http://www.gunviolencearchive.org/incident/1157396`.)
+
+#### Speed calculation notes
+
+There are approximately 5,000 incidents in one month.
+Between April 1, 2018 and December 31, 2019, there are 21 months.
+There will be approximately 105,000 incidents to scrape.
+
+If we allow a scraper 3 seconds to scrape a single incident, and we run 5 scrapers in parallel, then we will be able to scrape 20 \* 5 = 100 incidents in one minute.
+
+Thus, it will take 1050 minutes, or about 17.5 hours, to scrape the entirety of 2018-2019.
 
 ### Stage 3
 
