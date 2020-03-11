@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, Namespace
 import asyncio
 from collections import defaultdict, namedtuple
+import multiprocessing as mp
 from multiprocessing import Pool, cpu_count
 from typing import Dict, List, Optional, Tuple, Union, cast
 import re
@@ -310,13 +311,17 @@ class Scraper(object):
 
 
 def scrape_incidents(df, chrome_options):
+    """
+    Cracks open a new Chrome browser to extract incident data based on the URL in every field in 
+    the dataframe.
+    """
     browser = webdriver.Chrome(options=chrome_options)
 
     new_df = pd.DataFrame([], columns=[*df.columns, *ALL_FIELD_NAMES])
     print(new_df)
 
-    for i in range(3):
-        sleep(1)
+    for i in df.index.values:
+        sleep(2)
         # Unpack the row.
         row = df.loc[i]
         context = IncidentContext(
@@ -345,7 +350,8 @@ def scrape_incidents(df, chrome_options):
             return h2.parent if h2 else None
 
         location_fields = Scraper.extract_location_fields(find_content_div('Location'), context)
-        participant_fields = Scraper.extract_participant_fields(find_content_div('Participants'))
+        participant_fields = Scraper.extract_participant_fields(
+            find_content_div('Participants'))
         guns_involved_fields = Scraper.extract_guns_involved_fields(
             find_content_div('Guns Involved')
         )
@@ -386,7 +392,7 @@ def scrape_incidents(df, chrome_options):
     return new_df
 
 
-async def main():
+def main():
     args = parse_args()
 
     df = load_input(args)
@@ -395,16 +401,36 @@ async def main():
     if args.should_use_headless:
         options.add_argument('--headless')
 
-    new_df = scrape_incidents(df, options)
+    # new_df = scrape_incidents(df, options)
 
+    def split(a, n):
+        k, m = divmod(len(a), n)
+        return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
+    # print(list(split(df, mp.cpu_count() - 1)))
+
+    # num_threads = mp.cpu_count() - 1
+    num_threads = 3
+    df = df[:num_threads * 4]
+    dfs = list(split(df, num_threads))
+    args_list = [(df, options) for df in dfs]
+
+    # with mp.Pool(num_threads) as pool:
+    with mp.Pool(num_threads) as pool:
+        result = pool.starmap(scrape_incidents, args_list)
+
+    print('Done scraping. Now writing.')
+
+    new_df = pd.concat(result)
     write_output(args, new_df)
     print('Wrote.')
 
 
 if __name__ == '__main__':
     print('Running')
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    finally:
-        loop.close()
+    main()
+    # loop = asyncio.get_event_loop()
+    # try:
+    #     loop.run_until_complete(main())
+    # finally:
+    #     loop.close()
