@@ -48,6 +48,25 @@
 | state_house_district        | int                             | congressional house district value                                            | no        |
 | state_senate_district       | int                             | congressional senate district value                                           | no        |
 
+t notes:
+
+-   Each list is encoded as a string with separator `||`. For example, `"a||b"` represents `['a', 'b']`.
+-   Each dict is encoded as a string with outer separator `||` and inner separator `::`. For example, `0::a, 1::b` represents `{0: 'a', 1: 'b'}`.
+-   The "gun ID" and "participant ID" are numbers specific to a given incident that refer to a particular gun/person involved in that incident. For example, this:
+
+    ```
+    participant_age_group = 0::Teen 12-17||1::Adult 18+
+    participant_status = 0::Killed||1::Injured
+    participant_type = 0::Victim||1::Victim
+    ```
+
+    corresponds to this:
+
+    |                    | Age Group  | Status  | Type   |
+    | ------------------ | ---------- | ------- | ------ |
+    | **Participant #0** | Teen 12-17 | Killed  | Victim |
+    | **Participant #1** | Adult 18+  | Injured | Victim |
+
 -   population: contains the fields
 
 | field                      | type  | description                                                                                             | required? |
@@ -63,3 +82,12 @@
 | land_square_miles          | float | nember of square miles that is land in the area                                                         | no        |
 | land_population_density    | float | population density with respect to land mass                                                            | no        |
 | housing_population_density | float | population density with respect to housing                                                              | no        |
+
+-   housing: contains the fields
+
+| field                      | type  | description                                                                                             | required? |
+| -------------------------- | ----- | ------------------------------------------------------------------------------------------------------- | --------- |
+| city                       | str   | city name, lowercase, a-z only                                                                          | yes       |
+| state                      | str   | state name, two letter abbreviation, lowercase                                                          | yes       |
+| county                     | str   | county name, lowercase, a-z only                                                                        | yes       |
+| prices                     | str   | JSON dictionary with integer housing prices by month. In the format "YYYY-MM":price                     | no        |
