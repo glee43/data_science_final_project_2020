@@ -82,3 +82,12 @@ t notes:
 | land_square_miles          | float | nember of square miles that is land in the area                                                         | no        |
 | land_population_density    | float | population density with respect to land mass                                                            | no        |
 | housing_population_density | float | population density with respect to housing                                                              | no        |
+
+-   housing: contains the fields
+
+| field                      | type  | description                                                                                             | required? |
+| -------------------------- | ----- | ------------------------------------------------------------------------------------------------------- | --------- |
+| city                       | str   | city name, lowercase, a-z only                                                                          | yes       |
+| state                      | str   | state name, two letter abbreviation, lowercase                                                          | yes       |
+| county                     | str   | county name, lowercase, a-z only                                                                        | yes       |
+| prices                     | str   | JSON dictionary with integer housing prices by month. In the format "YYYY-MM":price                     | no        |

@@ -1,0 +1,9 @@
+{
+  "python.pythonPath": "venv/bin/python3.7",
+  "[python]": {
+    "editor.formatOnSave": true
+  },
+  "python.formatting.autopep8Args": ["--max-line-length", "100"],
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true
+}
