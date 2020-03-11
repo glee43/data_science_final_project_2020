@@ -572,29 +572,44 @@
 					<b style="color:#2f74b5">Are there missing values? Do these occur in fields that are important for
 						your project's goals?</b><br>
 					<b> Gun Violence Database: </b> <br>
-					<b> Population Database: </b> No, this database is relatively clean.<br><br>
-
+					<b> Population Database: </b> No, this database is relatively clean.<br>
+					<b> Housing Price Database: </b> Some cities are missing price estimates for the early years. This
+					isn't particularly important for our project since we will still have plenty gun violence data from
+					areas with a wide variety of housing prices even if we have to discard some examples due to lack of
+					price data.<br><br>
 					<b style="color:#2f74b5">Are there duplicates? Do these occur in fields that are important for your
 						project's goals?</b><br>
 					<b> Gun Violence Database: </b> <br>
-					<b> Population Database: </b> No.<br><br>
+					<b> Population Database: </b> No.<br>
+					<b> Population Database: </b> There are no duplicates, each town/city is unique.<br><br>
 					<b style="color:#2f74b5">How is the data distributed? Is it uniform or skewed? Are there outliers?
 						What are the min/max values?</b><br>
 					<b> Gun Violence Database: </b> <br>
-					<b> Population Database: </b> <br><br>
+					<b> Population Database: </b> <br>
+					<b> Housing Price Database: </b> Looking at the housing price estimates by city/town for January,
+					2020, it appears that the data is skewed and there are outliers. most of the data points fall in the
+					range of a couple hundred thousand dollars, or under one hundred thousand dollars for smaller towns.
+					The distribution is skewed right with a few outlier towns have housing prices in the millions. The
+					highest housing price estimate was 15.4 million dollars. <br>
 					<b style="color:#2f74b5">HAre there any data type issues? Where are these coming from? How will you
 						fix them?</b><br>
 					<b> Gun Violence Database: </b> <br>
 					<b> Population Database: </b> For some areas where the population is 0 or there exist no land masses
 					or housing data, the calculation for population density resulted in undefined. Hence, the csv data
-					gave (X) for those areas, and I chose to represent this as -1 in our database. <br><br>
+					gave (X) for those areas, and I chose to represent this as -1 in our database. <br>
+					<b> Housing Price Database: </b> There were no significant data type errors. Some of the town names
+					had non utf-8 symbols in their names which made them hard to read in Python. These instances were
+					changed to have the most similar utf-8 symbol.<br><br>
 					<b style="color:#2f74b5">Do you need to throw any data away? What data? Why? Any reason this might
 						affect the analyses you are able to run or the conclusions you are able to draw?</b><br>
 					<b> Gun Violence Database: </b> <br>
 					<b> Population Database: </b> For areas where the population is 0, we likely will not use this as we
 					are trying to say something about incidents of gun violence by area; an area with 0 population or
 					where the land area is all water probably won’t have location and therefore there will be no
-					meaningful Joins. <br><br>
+					meaningful Joins. <br>
+					<b> Housing Price Database: </b> None of the data in this dataset specifically needs to be thrown
+					away, but incidences of gun violence for which the relevant housing price data is not available may
+					need to be thrown away since the housing price data is necessary for our analysis.<br><br>
 				</p>
 			</section>
 
