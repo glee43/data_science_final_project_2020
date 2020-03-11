@@ -1,72 +1,78 @@
 <style>
-    /* @import url('//fonts.googleapis.com/css?family=Josefin+Slab:400,700'); */
-    @import url('https://fonts.googleapis.com/css?family=Inter&display=swap');
-body {
-  overflow: hidden;
-}
-a {
-  text-decoration: none;
-}
-.st-container {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	/* font-family: 'Josefin Slab', 'Myriad Pro', Arial, sans-serif; */
-    font-family: 'Inter', sans-serif;
-}
+	/* @import url('//fonts.googleapis.com/css?family=Josefin+Slab:400,700'); */
+	@import url('https://fonts.googleapis.com/css?family=Inter&display=swap');
 
-.st-container > input,
-.st-container > a {
-	position: fixed;
-	bottom: 0px;
-	width: 34%;
-    /* width: 20%; */
-	cursor: pointer;
-	font-size: 16px;
-	height: 34px;
-	line-height: 34px;
-}
+	body {
+		overflow: hidden;
+	}
 
-.st-container > input {
-	opacity: 0;
-	z-index: 1000;
-}
+	a {
+		text-decoration: none;
+	}
 
-.st-container > a {
-	z-index: 10;
-	font-weight: 700;
-	background: #64add8;
-	color: #fff;
-	text-align: center;
-	text-shadow: 1px 1px 1px rgba(151,24,64,0.2);
-}
+	.st-container {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		/* font-family: 'Josefin Slab', 'Myriad Pro', Arial, sans-serif; */
+		font-family: 'Inter', sans-serif;
+	}
 
-/* "Fix" for percentage rounding: add a background bar pseudo element with the same color like the labels */
-.st-container:before {
-	content: '';
-	position: fixed;
-	width: 100%;
-	height: 34px;
-	background: #64add8;
-	z-index: 9;
-	bottom: 0;
-}
+	.st-container>input,
+	.st-container>a {
+		position: fixed;
+		bottom: 0px;
+		width: 34%;
+		/* width: 20%; */
+		cursor: pointer;
+		font-size: 16px;
+		height: 34px;
+		line-height: 34px;
+	}
 
-#st-control-1, #st-control-1 + a {
-	left: 0;
-}
+	.st-container>input {
+		opacity: 0;
+		z-index: 1000;
+	}
 
-#st-control-2, #st-control-2 + a {
-	left: 33%;
-}
+	.st-container>a {
+		z-index: 10;
+		font-weight: 700;
+		background: #64add8;
+		color: #fff;
+		text-align: center;
+		text-shadow: 1px 1px 1px rgba(151, 24, 64, 0.2);
+	}
 
-#st-control-3, #st-control-3 + a {
-	left: 66%;
-}
+	/* "Fix" for percentage rounding: add a background bar pseudo element with the same color like the labels */
+	.st-container:before {
+		content: '';
+		position: fixed;
+		width: 100%;
+		height: 34px;
+		background: #64add8;
+		z-index: 9;
+		bottom: 0;
+	}
 
-/* #st-control-4, #st-control-4 + a {
+	#st-control-1,
+	#st-control-1+a {
+		left: 0;
+	}
+
+	#st-control-2,
+	#st-control-2+a {
+		left: 33%;
+	}
+
+	#st-control-3,
+	#st-control-3+a {
+		left: 66%;
+	}
+
+	/* #st-control-4, #st-control-4 + a {
 	left: 60%;
 }
 
@@ -74,471 +80,544 @@ a {
 	left: 80%;
 } */
 
-.st-container > input:checked + a,
-.st-container > input:checked:hover + a{
-	background: #2f74b5;
-}
+	.st-container>input:checked+a,
+	.st-container>input:checked:hover+a {
+		background: #2f74b5;
+	}
 
-.st-container > input:checked + a:after,
-.st-container > input:checked:hover + a:after{
-	bottom: 100%;
-	border: solid transparent;
-	content: '';
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-	border-bottom-color: #2f74b5;
-	border-width: 20px;
-	left: 50%;
-	margin-left: -20px;
-}
+	.st-container>input:checked+a:after,
+	.st-container>input:checked:hover+a:after {
+		bottom: 100%;
+		border: solid transparent;
+		content: '';
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		border-bottom-color: #2f74b5;
+		border-width: 20px;
+		left: 50%;
+		margin-left: -20px;
+	}
 
-.st-container > input:hover + a{
-	background: #0c467c;
-}
+	.st-container>input:hover+a {
+		background: #0c467c;
+	}
 
-.st-container > input:hover + a:after {
-	border-bottom-color: #0c467c;
-}
+	.st-container>input:hover+a:after {
+		border-bottom-color: #0c467c;
+	}
 
-.st-scroll,
-.st-panel {
-	position: relative;
-	width: 100%;
-	height: 100%;
-}
+	.st-scroll,
+	.st-panel {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
 
-.st-scroll {
-	top: 0;
-	left: 0;
-	-webkit-transition: all 0.6s ease-in-out;
-	-moz-transition: all 0.6s ease-in-out;
-	-o-transition: all 0.6s ease-in-out;
-	-ms-transition: all 0.6s ease-in-out;
-	transition: all 0.6s ease-in-out;
-	
-	/* Let's enforce some hardware acceleration */
-	-webkit-transform: translate3d(0, 0, 0);
-	-webkit-backface-visibility: hidden;
-}
+	.st-scroll {
+		top: 0;
+		left: 0;
+		-webkit-transition: all 0.6s ease-in-out;
+		-moz-transition: all 0.6s ease-in-out;
+		-o-transition: all 0.6s ease-in-out;
+		-ms-transition: all 0.6s ease-in-out;
+		transition: all 0.6s ease-in-out;
 
-.st-panel{
-	background: #fff;
-	overflow: hidden;
-} 
+		/* Let's enforce some hardware acceleration */
+		-webkit-transform: translate3d(0, 0, 0);
+		-webkit-backface-visibility: hidden;
+	}
 
-#st-control-1:checked ~ .st-scroll {
-	-webkit-transform: translateY(0%);
-	-moz-transform: translateY(0%);
-	-o-transform: translateY(0%);
-	-ms-transform: translateY(0%);
-	transform: translateY(0%);
-}
-#st-control-2:checked ~ .st-scroll {
-	-webkit-transform: translateY(-100%);
-	-moz-transform: translateY(-100%);
-	-o-transform: translateY(-100%);
-	-ms-transform: translateY(-100%);
-	transform: translateY(-100%);
-}
-#st-control-3:checked ~ .st-scroll {
-	-webkit-transform: translateY(-200%);
-	-moz-transform: translateY(-200%);
-	-o-transform: translateY(-200%);
-	-ms-transform: translateY(-200%);
-	transform: translateY(-200%);
-}
-#st-control-4:checked ~ .st-scroll {
-	-webkit-transform: translateY(-300%);
-	-moz-transform: translateY(-300%);
-	-o-transform: translateY(-300%);
-	-ms-transform: translateY(-300%);
-	transform: translateY(-300%);
-}
-#st-control-5:checked ~ .st-scroll {
-	-webkit-transform: translateY(-400%);
-	-moz-transform: translateY(-400%);
-	-o-transform: translateY(-400%);
-	-ms-transform: translateY(-400%);
-	transform: translateY(-400%);
-}
+	.st-panel {
+		background: #fff;
+		overflow: hidden;
+	}
+
+	#st-control-1:checked~.st-scroll {
+		-webkit-transform: translateY(0%);
+		-moz-transform: translateY(0%);
+		-o-transform: translateY(0%);
+		-ms-transform: translateY(0%);
+		transform: translateY(0%);
+	}
+
+	#st-control-2:checked~.st-scroll {
+		-webkit-transform: translateY(-100%);
+		-moz-transform: translateY(-100%);
+		-o-transform: translateY(-100%);
+		-ms-transform: translateY(-100%);
+		transform: translateY(-100%);
+	}
+
+	#st-control-3:checked~.st-scroll {
+		-webkit-transform: translateY(-200%);
+		-moz-transform: translateY(-200%);
+		-o-transform: translateY(-200%);
+		-ms-transform: translateY(-200%);
+		transform: translateY(-200%);
+	}
+
+	#st-control-4:checked~.st-scroll {
+		-webkit-transform: translateY(-300%);
+		-moz-transform: translateY(-300%);
+		-o-transform: translateY(-300%);
+		-ms-transform: translateY(-300%);
+		transform: translateY(-300%);
+	}
+
+	#st-control-5:checked~.st-scroll {
+		-webkit-transform: translateY(-400%);
+		-moz-transform: translateY(-400%);
+		-o-transform: translateY(-400%);
+		-ms-transform: translateY(-400%);
+		transform: translateY(-400%);
+	}
 
 
-/* Content elements */
+	/* Content elements */
 
-.st-deco{
-	/* width: 200px;
+	.st-deco {
+		/* width: 200px;
 	height: 200px; */
-	width: 30px;
-	height: 30px;
-	position: absolute;
-	top: 0px;
-	left: 50%;
-    /* margin-left: -100px; */
-	margin-left: -15px;
-	background: #94c9e7;
-	-webkit-transform: translateY(-50%) rotate(45deg);
-	-moz-transform: translateY(-50%) rotate(45deg);
-	-o-transform: translateY(-50%) rotate(45deg);
-	-ms-transform: translateY(-50%) rotate(45deg);
-	transform: translateY(-50%) rotate(45deg);
-}
+		width: 30px;
+		height: 30px;
+		position: absolute;
+		top: 0px;
+		left: 50%;
+		/* margin-left: -100px; */
+		margin-left: -15px;
+		background: #94c9e7;
+		-webkit-transform: translateY(-50%) rotate(45deg);
+		-moz-transform: translateY(-50%) rotate(45deg);
+		-o-transform: translateY(-50%) rotate(45deg);
+		-ms-transform: translateY(-50%) rotate(45deg);
+		transform: translateY(-50%) rotate(45deg);
+	}
 
-[data-icon]:after {
-    content: attr(data-icon);
-    font-family: 'FontAwesome';
-    color: #fff;
-	text-shadow: 1px 1px 1px rgba(151,24,64,0.2);
-	position: absolute;
-	width: 200px;
-	height: 200px;
-	line-height: 200px;
-	text-align: center;
-	/* font-size: 90px; */
-    font-size: 20px;
-	/* top: 50%;
-	left: 50%; */
-	top: -50%;
-	left: -50%;
-	margin: -100px 0 0 -100px;
-	-webkit-transform: rotate(-45deg) translateY(25%);
-	-moz-transform: rotate(-45deg) translateY(25%);
-	-o-transform: rotate(-45deg) translateY(25%);
-	-ms-transform: rotate(-45deg) translateY(25%);
-	transform: rotate(-45deg) translateY(25%);
-}
-
-.st-panel h2 {
-	color: #2f74b5;
-	text-shadow: 1px 1px 1px rgba(151,24,64,0.2);
-	position: absolute;
-	/* font-size: 54px; */
-    font-size: 20px;
-	font-weight: 900;
-	width: 80%;
-	left: 10%;
-	text-align: center;
-	line-height: 50px;
-	/* margin: -70px 0 0 0; */
-    margin: -70px 0 0 0;
-	padding: 0;
-	/* top: 50%; */
-    top: 15%;
-	-webkit-backface-visibility: hidden;
-}
-
-.st-panel h3 {
-	color: #0c467c;
-	text-shadow: 1px 1px 1px rgba(151,24,64,0.2);
-	position: absolute;
-	/* font-size: 54px; */
-    font-size: 20px;
-	font-weight: 900;
-	width: 80%;
-	left: 10%;
-	text-align: left;
-	line-height: 50px;
-	/* margin: -70px 0 0 0; */
-    margin: -70px 0 0 0;
-	padding: 0;
-	/* top: 50%; */
-    top: 15%;
-	-webkit-backface-visibility: hidden;
-}
-
-#st-control-1:checked ~ .st-scroll #st-panel-1 h2,
-#st-control-2:checked ~ .st-scroll #st-panel-2 h2,
-#st-control-3:checked ~ .st-scroll #st-panel-3 h2,
-#st-control-4:checked ~ .st-scroll #st-panel-4 h2,
-#st-control-5:checked ~ .st-scroll #st-panel-5 h2{
-	-webkit-animation: moveDown 0.6s ease-in-out 0.2s backwards;
-	-moz-animation: moveDown 0.6s ease-in-out 0.2s backwards;
-	-o-animation: moveDown 0.6s ease-in-out 0.2s backwards;
-	-ms-animation: moveDown 0.6s ease-in-out 0.2s backwards;
-	animation: moveDown 0.6s ease-in-out 0.2s backwards;
-}
-@-webkit-keyframes moveDown{
-	0% { 
-		-webkit-transform: translateY(-40px); 
-		opacity: 0;
-	}
-	100% { 
-		-webkit-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-moz-keyframes moveDown{
-	0% { 
-		-moz-transform: translateY(-40px); 
-		opacity: 0;
-	}
-	100% { 
-		-moz-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-o-keyframes moveDown{
-	0% { 
-		-o-transform: translateY(-40px); 
-		opacity: 0;
-	}
-	100% { 
-		-o-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-ms-keyframes moveDown{
-	0% { 
-		-ms-transform: translateY(-40px); 
-		opacity: 0;
-	}
-	100% { 
-		-ms-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@keyframes moveDown{
-	0% { 
-		transform: translateY(-40px); 
-		opacity: 0;
-	}
-	100% { 
-		transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-.st-panel p {
-	position: absolute;
-	/* text-align: center; */
-    text-align: left;
-	font-size: 16px;
-	line-height: 22px;
-	color: #8b8b8b;
-	z-index: 2;
-	padding: 0;
-	/* width: 50%;
-	left: 25%; */
-    width: 80%;
-    left: 10%;
-	/* top: 50%; */
-    top: 15%;
-    /* bottom: -30%; */
-	margin: -20px 0 0 0;
-	-webkit-backface-visibility: hidden;
-}
-#st-control-1:checked ~ .st-scroll #st-panel-1 p,
-#st-control-2:checked ~ .st-scroll #st-panel-2 p,
-#st-control-3:checked ~ .st-scroll #st-panel-3 p,
-#st-control-4:checked ~ .st-scroll #st-panel-4 p,
-#st-control-5:checked ~ .st-scroll #st-panel-5 p{
-	-webkit-animation: moveUp 0.6s ease-in-out 0.2s backwards;
-	-moz-animation: moveUp 0.6s ease-in-out 0.2s backwards;
-	-o-animation: moveUp 0.6s ease-in-out 0.2s backwards;
-	-ms-animation: moveUp 0.6s ease-in-out 0.2s backwards;
-	animation: moveUp 0.6s ease-in-out 0.2s backwards;
-}
-
-@-webkit-keyframes moveUp{
-	0% { 
-		-webkit-transform: translateY(40px); 
-		opacity: 0;
-	}
-	100% { 
-		-webkit-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-moz-keyframes moveUp{
-	0% { 
-		-moz-transform: translateY(40px); 
-		opacity: 0;
-	}
-	100% { 
-		-moz-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-o-keyframes moveUp{
-	0% { 
-		-o-transform: translateY(40px); 
-		opacity: 0;
-	}
-	100% { 
-		-o-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@-ms-keyframes moveUp{
-	0% { 
-		-ms-transform: translateY(40px); 
-		opacity: 0;
-	}
-	100% { 
-		-ms-transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-@keyframes moveUp{
-	0% { 
-		transform: translateY(40px); 
-		opacity: 0;
-	}
-	100% { 
-		transform: translateY(0px);  
-		opacity: 1;
-	}
-}
-
-/* Colored sections */
-
-.st-color,
-.st-deco{
-	background: #94c9e7;
-}
-.st-color [data-icon]:after {
-	color: #94c9e7;
-}
-.st-color .st-deco {
-	background: #fff;
-}
-.st-color h2 {
-	color: #fff;
-	text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-} 
-.st-color p {
-	color: #fff;
-	color: rgba(255,255,255,0.8);
-}
-
-@media screen and (max-width: 520px) {
-	.st-panel h2 {
-		font-size: 42px;
-	}
-	
-	.st-panel p {
-		width: 90%;
-		left: 5%;
-		margin-top: 0;
-	}
-	
-	.st-container > a {
-		font-size: 13px;
-	}
-}
-@media screen and (max-width: 360px) {
-	.st-container > a {
-		font-size: 10px;
-	}
-	
-	.st-deco{
-		width: 120px;
-		height: 120px;
-		margin-left: -60px;
-	}
-	
 	[data-icon]:after {
-		font-size: 60px;
-		-webkit-transform: rotate(-45deg) translateY(15%);
-		-moz-transform: rotate(-45deg) translateY(15%);
-		-o-transform: rotate(-45deg) translateY(15%);
-		-ms-transform: rotate(-45deg) translateY(15%);
-		transform: rotate(-45deg) translateY(15%);
+		content: attr(data-icon);
+		font-family: 'FontAwesome';
+		color: #fff;
+		text-shadow: 1px 1px 1px rgba(151, 24, 64, 0.2);
+		position: absolute;
+		width: 200px;
+		height: 200px;
+		line-height: 200px;
+		text-align: center;
+		/* font-size: 90px; */
+		font-size: 20px;
+		/* top: 50%;
+	left: 50%; */
+		top: -50%;
+		left: -50%;
+		margin: -100px 0 0 -100px;
+		-webkit-transform: rotate(-45deg) translateY(25%);
+		-moz-transform: rotate(-45deg) translateY(25%);
+		-o-transform: rotate(-45deg) translateY(25%);
+		-ms-transform: rotate(-45deg) translateY(25%);
+		transform: rotate(-45deg) translateY(25%);
 	}
-}
+
+	.st-panel h2 {
+		color: #2f74b5;
+		text-shadow: 1px 1px 1px rgba(151, 24, 64, 0.2);
+		position: absolute;
+		/* font-size: 54px; */
+		font-size: 20px;
+		font-weight: 900;
+		width: 80%;
+		left: 10%;
+		text-align: center;
+		line-height: 50px;
+		/* margin: -70px 0 0 0; */
+		margin: -70px 0 0 0;
+		padding: 0;
+		/* top: 50%; */
+		top: 15%;
+		-webkit-backface-visibility: hidden;
+	}
+
+	.st-panel h3 {
+		color: #0c467c;
+		text-shadow: 1px 1px 1px rgba(151, 24, 64, 0.2);
+		position: absolute;
+		/* font-size: 54px; */
+		font-size: 20px;
+		font-weight: 900;
+		width: 80%;
+		left: 10%;
+		text-align: left;
+		line-height: 50px;
+		/* margin: -70px 0 0 0; */
+		margin: -70px 0 0 0;
+		padding: 0;
+		/* top: 50%; */
+		top: 15%;
+		-webkit-backface-visibility: hidden;
+	}
+
+	#st-control-1:checked~.st-scroll #st-panel-1 h2,
+	#st-control-2:checked~.st-scroll #st-panel-2 h2,
+	#st-control-3:checked~.st-scroll #st-panel-3 h2,
+	#st-control-4:checked~.st-scroll #st-panel-4 h2,
+	#st-control-5:checked~.st-scroll #st-panel-5 h2 {
+		-webkit-animation: moveDown 0.6s ease-in-out 0.2s backwards;
+		-moz-animation: moveDown 0.6s ease-in-out 0.2s backwards;
+		-o-animation: moveDown 0.6s ease-in-out 0.2s backwards;
+		-ms-animation: moveDown 0.6s ease-in-out 0.2s backwards;
+		animation: moveDown 0.6s ease-in-out 0.2s backwards;
+	}
+
+	@-webkit-keyframes moveDown {
+		0% {
+			-webkit-transform: translateY(-40px);
+			opacity: 0;
+		}
+
+		100% {
+			-webkit-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-moz-keyframes moveDown {
+		0% {
+			-moz-transform: translateY(-40px);
+			opacity: 0;
+		}
+
+		100% {
+			-moz-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-o-keyframes moveDown {
+		0% {
+			-o-transform: translateY(-40px);
+			opacity: 0;
+		}
+
+		100% {
+			-o-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-ms-keyframes moveDown {
+		0% {
+			-ms-transform: translateY(-40px);
+			opacity: 0;
+		}
+
+		100% {
+			-ms-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@keyframes moveDown {
+		0% {
+			transform: translateY(-40px);
+			opacity: 0;
+		}
+
+		100% {
+			transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	.st-panel p {
+		position: absolute;
+		/* text-align: center; */
+		text-align: left;
+		font-size: 16px;
+		line-height: 22px;
+		color: #8b8b8b;
+		z-index: 2;
+		padding: 0;
+		/* width: 50%;
+	left: 25%; */
+		width: 80%;
+		left: 10%;
+		/* top: 50%; */
+		top: 15%;
+		/* bottom: -30%; */
+		margin: -20px 0 0 0;
+		-webkit-backface-visibility: hidden;
+	}
+
+	#st-control-1:checked~.st-scroll #st-panel-1 p,
+	#st-control-2:checked~.st-scroll #st-panel-2 p,
+	#st-control-3:checked~.st-scroll #st-panel-3 p,
+	#st-control-4:checked~.st-scroll #st-panel-4 p,
+	#st-control-5:checked~.st-scroll #st-panel-5 p {
+		-webkit-animation: moveUp 0.6s ease-in-out 0.2s backwards;
+		-moz-animation: moveUp 0.6s ease-in-out 0.2s backwards;
+		-o-animation: moveUp 0.6s ease-in-out 0.2s backwards;
+		-ms-animation: moveUp 0.6s ease-in-out 0.2s backwards;
+		animation: moveUp 0.6s ease-in-out 0.2s backwards;
+	}
+
+	@-webkit-keyframes moveUp {
+		0% {
+			-webkit-transform: translateY(40px);
+			opacity: 0;
+		}
+
+		100% {
+			-webkit-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-moz-keyframes moveUp {
+		0% {
+			-moz-transform: translateY(40px);
+			opacity: 0;
+		}
+
+		100% {
+			-moz-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-o-keyframes moveUp {
+		0% {
+			-o-transform: translateY(40px);
+			opacity: 0;
+		}
+
+		100% {
+			-o-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@-ms-keyframes moveUp {
+		0% {
+			-ms-transform: translateY(40px);
+			opacity: 0;
+		}
+
+		100% {
+			-ms-transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	@keyframes moveUp {
+		0% {
+			transform: translateY(40px);
+			opacity: 0;
+		}
+
+		100% {
+			transform: translateY(0px);
+			opacity: 1;
+		}
+	}
+
+	/* Colored sections */
+
+	.st-color,
+	.st-deco {
+		background: #94c9e7;
+	}
+
+	.st-color [data-icon]:after {
+		color: #94c9e7;
+	}
+
+	.st-color .st-deco {
+		background: #fff;
+	}
+
+	.st-color h2 {
+		color: #fff;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+	}
+
+	.st-color p {
+		color: #fff;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	@media screen and (max-width: 520px) {
+		.st-panel h2 {
+			font-size: 42px;
+		}
+
+		.st-panel p {
+			width: 90%;
+			left: 5%;
+			margin-top: 0;
+		}
+
+		.st-container>a {
+			font-size: 13px;
+		}
+	}
+
+	@media screen and (max-width: 360px) {
+		.st-container>a {
+			font-size: 10px;
+		}
+
+		.st-deco {
+			width: 120px;
+			height: 120px;
+			margin-left: -60px;
+		}
+
+		[data-icon]:after {
+			font-size: 60px;
+			-webkit-transform: rotate(-45deg) translateY(15%);
+			-moz-transform: rotate(-45deg) translateY(15%);
+			-o-transform: rotate(-45deg) translateY(15%);
+			-ms-transform: rotate(-45deg) translateY(15%);
+			transform: rotate(-45deg) translateY(15%);
+		}
+	}
 </style>
 
 <div class="container">
-			
-    <div class="st-container">
-    
-        <input type="radio" name="radio-set" checked="checked" id="st-control-1"/>
-        <a href="#st-panel-1">Data Background</a>
-        <input type="radio" name="radio-set" id="st-control-2"/>
-        <a href="#st-panel-2">Data Specs</a>
-        <input type="radio" name="radio-set" id="st-control-3"/>
-        <a href="#st-panel-3">Summary & Next Steps</a>
-        <!-- <input type="radio" name="radio-set" id="st-control-4"/>
+
+	<div class="st-container">
+
+		<input type="radio" name="radio-set" checked="checked" id="st-control-1" />
+		<a href="#st-panel-1">Data Background</a>
+		<input type="radio" name="radio-set" id="st-control-2" />
+		<a href="#st-panel-2">Data Specs</a>
+		<input type="radio" name="radio-set" id="st-control-3" />
+		<a href="#st-panel-3">Summary & Next Steps</a>
+		<!-- <input type="radio" name="radio-set" id="st-control-4"/>
         <a href="#st-panel-4"></a> -->
-        <!-- <input type="radio" name="radio-set" id="st-control-5"/>
+		<!-- <input type="radio" name="radio-set" id="st-control-5"/>
         <a href="#st-panel-5">Passion</a> -->
-        
-        <div class="st-scroll">
-                
-            <section class="st-panel" id="st-panel-1" style="overflow-y: visible;">
-                <!-- <div class="st-deco" data-icon="&#x25CC;"></div> -->
-                <!-- <div class="st-deco"  data-icon="lee-lee-ho-ho" ></div> -->
-                <div class="st-deco" data-icon="&#x25BF;"></div>
-                <h2>Where is the data from?</h2>
-                <p style="bottom:-10%"> <b style="color:#64add8">How did you collect your data?</b><br>
-                    <b> Gun Violence Database: </b> Majority from webscrapting using Selenium from the Gun Violence Archive: https://www.gunviolencearchive.org/ <br>
-                    <b> Population Database: </b> Received from the US census in csv format, read into a sql database. Light data processing completed. https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml <br><br>
-                    <b style="color:#64add8">Is the source reputable?</b><br>
-                    <b> Gun Violence Database: </b> Yes, the Gun Violence Archive is maintained daily from a non-profit organization that scrapes the internet for instances of Gun Violence. <br>
-                    <b> Population Database: </b> Yes, it is from the US Census of 2010. May be a bit outdated but should be fine for our purposes as an estimate of general US population. <br><br>
-                    <b style="color:#64add8">How did you generate the sample? Is it comparably small or large? Is it representative or is it likely to exhibit some kind of sampling bias?</b><br>
-                    <b> Gun Violence Database: </b> Webscraping from the Gun Violence Archive. <br>
-                    <b> Population Database: </b> Received it as a csv from the US census. Database is fairly comprehensive and contains a total of 40,840 examples by cities,counties, and states. <br><br>
-                    <b style="color:#64add8">Are there any other considerations you took into account when collecting your data?</b><br>
-                    <b> Gun Violence Database: </b> There may be privacy issues concerning the access of info about incidents that could potentially be traumatizing. <br>
-                    <b> Population Database: </b> In general, population data seems more informative than anything and is not problematic. 
-                </p>
-            </section>
-            
-            <!-- <section class="st-panel st-color" id="st-panel-2"> -->
-            <section class="st-panel st-color" id="st-panel-2" style="overflow-y: visible;">
-                <div class="st-deco" data-icon="&#x25BF;"></div>
-                <h2>How clean is the data? Does this data contain what we need?</h2>
-                <p style="bottom:-20%"> <b style="color:#2f74b5">How many data points are there total? How many   are there in each group you care about? Do you think this is enough data to do what you hope to do?</b><br>
-                <b> Gun Violence Database: </b> 263,653 thus far. <br>
-                <b> Population Database: </b> 40,840, which should be enough to divide the US in small groups for analysis. <br><br>
-                <b style="color:#2f74b5">Are there missing values? Do these occur in fields that are important for your project's goals?</b><br>
-                <b> Gun Violence Database: </b> <br>
-                <b> Population Database: </b> No, this database is relatively clean.<br><br>
-                <b style="color:#2f74b5">Are there duplicates? Do these occur in fields that are important for your project's goals?</b><br>
-                <b> Gun Violence Database: </b> <br>
-                <b> Population Database: </b> No.<br><br>
-                <b style="color:#2f74b5">How is the data distributed? Is it uniform or skewed? Are there outliers? What are the min/max values?</b><br>
-                <b> Gun Violence Database: </b> <br>
-                <b> Population Database: </b> <br><br>
-                <b style="color:#2f74b5">HAre there any data type issues? Where are these coming from? How will you fix them?</b><br>
-                <b> Gun Violence Database: </b> <br>
-                <b> Population Database: </b> For some areas where the population is 0 or there exist no land masses or housing data, the calculation for population density resulted in undefined. Hence, the csv data gave (X) for those areas, and I chose to represent this as -1 in our database. <br><br>
-                <b style="color:#2f74b5">Do you need to throw any data away? What data? Why? Any reason this might affect the analyses you are able to run or the conclusions you are able to draw?</b><br>
-                <b> Gun Violence Database: </b> <br>
-                <b> Population Database: </b> For areas where the population is 0, we likely will not use this as we are trying to say something about incidents of gun violence by area; an area with 0 population or where the land area is all water probably won’t have location and therefore there will be no meaningful Joins. <br><br>
-                </p>
-            </section>
-            
-            <section class="st-panel" id="st-panel-3" style="overflow-y: visible;">
-                <div class="st-deco" data-icon="&#x25BF;"></div>
-                <h2>Summary of progress & discussion of next steps and analysis</h2>
-                <p style="bottom: 0%">Thus far,</p>
-            </section>
-            
-            <!-- <section class="st-panel st-color" id="st-panel-4">
+
+		<div class="st-scroll">
+
+			<section class="st-panel" id="st-panel-1" style="overflow-y: visible;">
+				<!-- <div class="st-deco" data-icon="&#x25CC;"></div> -->
+				<!-- <div class="st-deco"  data-icon="lee-lee-ho-ho" ></div> -->
+				<div class="st-deco" data-icon="&#x25BF;"></div>
+				<h2>Where is the data from?</h2>
+				<p style="bottom:-10%"> <b style="color:#64add8">How did you collect your data?</b><br>
+					<b> Gun Violence Database: </b> Majority from webscrapting using Selenium from the Gun Violence
+					Archive: <a href="https://www.gunviolencearchive.org/">https://www.gunviolencearchive.org/</a> <br>
+					<b> Population Database: </b> Received from the US
+					census in csv format, read into a sql database.
+					Light data processing completed.
+					<a
+						href="https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml">https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml</a><br>
+					<b> Housing Price Database: </b>
+					Zillow has compiled home value estimates for different regions, with data
+					extending back to 1996. We downloaded monthly data as a csv and then loaded it into a SQL
+					database. Light processing was done (lowercasing names, removing special characters and
+					whitespace) so that fields would be easier to join with other tables.
+					<a href="https://www.zillow.com/research/data/ ">https://www.zillow.com/research/data/</a><br><br>
+					<b style="color:#64add8">Is the source reputable?</b><br>
+					<b> Gun Violence Database: </b> Yes, the Gun Violence Archive is maintained daily from a non-profit
+					organization that scrapes the internet for instances of Gun Violence. <br>
+					<b> Population Database: </b> Yes, it is from the US Census of 2010. May be a bit outdated but
+					should be fine for our purposes as an estimate of general US population. <br>
+					<b> Housing Price Database: </b> Yes, Zillow is a well established real estate marketplace founded
+					by former Microsoft executives. Though they are certainly reputable, the data provided is still just
+					an estimate of the true housing price in an area. However, the ZHVI metric that Zillow provides is a
+					good representation of the average housing price value for an area. <br><br>
+					<b style="color:#64add8">How did you generate the sample? Is it comparably small or large? Is it
+						representative or is it likely to exhibit some kind of sampling bias?</b><br>
+					<b> Gun Violence Database: </b> Webscraping from the Gun Violence Archive. <br>
+					<b> Population Database: </b> Received it as a csv from the US census. Database is fairly
+					comprehensive and contains a total of 40,840 examples by cities,counties, and states. <br>
+					<b> Housing Price Database: </b> Downloaded a csv from Zillow research. It has up to 25 years of
+					price data at a monthly resolution for over 27,000 US cities which makes it relatively large
+					compared to other datasets. Other sources for housing price estimates often had lower spatial and
+					temporal resolution in their sampling, frequently giving quarterly estimates or only estimating by
+					state or metro area. The price index provided by Zillow should be a representative sample since it
+					includes every town and city in the US. Some cities are missing data from certain years, but their
+					is no indication of bias in these omissions. <br><br>
+					<b style="color:#64add8">Are there any other considerations you took into account when collecting
+						your data?</b><br>
+					<b> Gun Violence Database: </b> There may be privacy issues concerning the access of info about
+					incidents that could potentially be traumatizing. <br>
+					<b> Population Database: </b> In general, population data seems more informative than anything and
+					is not problematic.<br>
+					<b> Housing Price Database: </b> It was important that the measure of average housing price be
+					comparable between cities. We first considered the HPI provided by the Federal Housing Finance
+					Agency, but it only showed the relative price of housing over time for each city independently.
+					Thus, the main considerations when choosingn a source of housing price data was that the data be an
+					absolute value that is comparable between cities, and that the data have the best possible spatial
+					and temporal resolution (as discussed above).
+				</p>
+			</section>
+
+			<!-- <section class="st-panel st-color" id="st-panel-2"> -->
+			<section class="st-panel st-color" id="st-panel-2" style="overflow-y: visible;">
+				<div class="st-deco" data-icon="&#x25BF;"></div>
+				<h2>How clean is the data? Does this data contain what we need?</h2>
+				<p style="bottom:-20%"> <b style="color:#2f74b5">How many data points are there total? How many are
+						there in each group you care about? Do you think this is enough data to do what you hope to
+						do?</b><br>
+					<b> Gun Violence Database: </b> 263,653 thus far. <br>
+					<b> Population Database: </b> 40,840, which should be enough to divide the US in small groups for
+					analysis. <br>
+					<b> Housing Price Database: </b> There are 27,554 towns/cities which each have up to 260 price
+					estimates, ranging from 1996 to 2013. Some price estimates are missing, but most have data going
+					back to at least 2013, which is the year that the gun violence archive data begins.<br><br>
+					<b style="color:#2f74b5">Are there missing values? Do these occur in fields that are important for
+						your project's goals?</b><br>
+					<b> Gun Violence Database: </b> <br>
+					<b> Population Database: </b> No, this database is relatively clean.<br><br>
+
+					<b style="color:#2f74b5">Are there duplicates? Do these occur in fields that are important for your
+						project's goals?</b><br>
+					<b> Gun Violence Database: </b> <br>
+					<b> Population Database: </b> No.<br><br>
+					<b style="color:#2f74b5">How is the data distributed? Is it uniform or skewed? Are there outliers?
+						What are the min/max values?</b><br>
+					<b> Gun Violence Database: </b> <br>
+					<b> Population Database: </b> <br><br>
+					<b style="color:#2f74b5">HAre there any data type issues? Where are these coming from? How will you
+						fix them?</b><br>
+					<b> Gun Violence Database: </b> <br>
+					<b> Population Database: </b> For some areas where the population is 0 or there exist no land masses
+					or housing data, the calculation for population density resulted in undefined. Hence, the csv data
+					gave (X) for those areas, and I chose to represent this as -1 in our database. <br><br>
+					<b style="color:#2f74b5">Do you need to throw any data away? What data? Why? Any reason this might
+						affect the analyses you are able to run or the conclusions you are able to draw?</b><br>
+					<b> Gun Violence Database: </b> <br>
+					<b> Population Database: </b> For areas where the population is 0, we likely will not use this as we
+					are trying to say something about incidents of gun violence by area; an area with 0 population or
+					where the land area is all water probably won’t have location and therefore there will be no
+					meaningful Joins. <br><br>
+				</p>
+			</section>
+
+			<section class="st-panel" id="st-panel-3" style="overflow-y: visible;">
+				<div class="st-deco" data-icon="&#x25BF;"></div>
+				<h2>Summary of progress & discussion of next steps and analysis</h2>
+				<p style="bottom: 0%">Thus far,</p>
+			</section>
+
+			<!-- <section class="st-panel st-color" id="st-panel-4">
                 <div class="st-deco" data-icon="&#xf06c;"></div>
                 <h2>Positivity</h2>
                 <p>Mixtape fap leggings art party, butcher authentic farm-to-table you probably haven't heard of them do labore cosby sweater.</p>
             </section> -->
-            
-            <!-- <section class="st-panel" id="st-panel-5">
+
+			<!-- <section class="st-panel" id="st-panel-5">
                 <div class="st-deco" data-icon="&#xf004;"></div>
                 <h2>Passion</h2>
                 <p>Fixie ad odd future polaroid dreamcatcher, nesciunt carles bicycle rights accusamus mcsweeney's mumblecore nulla irony.</p>
             </section> -->
 
-        </div><!-- // st-scroll -->
-        
-    </div><!-- // st-container -->
-    
+		</div><!-- // st-scroll -->
+
+	</div><!-- // st-container -->
+
 </div>
