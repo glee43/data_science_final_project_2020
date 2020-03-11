@@ -58,6 +58,8 @@ ALL_FIELD_NAMES = sorted([
     'state_house_district'
 ])
 
+DROPPED_FIELD_NAMES = ['participant_participant_characteristics']
+
 # —————
 # Utility functions
 
@@ -136,8 +138,8 @@ def _supplement_next_url(next_url: str, current_url: str) -> str:
     else:
         new_next_url = next_url.replace('http://', 'https://') + current_url[question_mark_idx:]
 
-    print(new_next_url)
-    print()
+    # print(new_next_url)
+    # print()
     return new_next_url
 
 
@@ -169,7 +171,7 @@ def _stringify_dict(d, dictsep='::', listsep='||'):
     return listsep.join([dictsep.join([k, v]) for k, v in zip(keys, values)])
 
 
-def _normalize(fields: List[Field]) -> List[Field]:
+def _normalize(fields: List[Field], url: str) -> List[Field]:
     # Ensure that the fields are alphabetically ordered by field name.
     fields = sorted(fields, key=lambda f: f.name)
 
@@ -177,8 +179,9 @@ def _normalize(fields: List[Field]) -> List[Field]:
     field_names_and_values = [field for field in zip(*fields)]
     field_names = set(field_names_and_values[0])
 
-    unexpected_field_names = field_names - set(ALL_FIELD_NAMES)
-    assert len(unexpected_field_names) == 0, f'Unexpected field names: {unexpected_field_names}'
+    unexpected_field_names = field_names - set(ALL_FIELD_NAMES) - set(DROPPED_FIELD_NAMES)
+    assert len(
+        unexpected_field_names) == 0, f'Unexpected field names: {unexpected_field_names}\n{url}'
 
     # Add dummy fields for missing field names.
     i = 0
@@ -239,6 +242,7 @@ class Scraper(object):
         for i, linegroup in enumerate(linegroups):
             linegroup = linegroups[i]
             kvpairs = [line.split(':') for line in linegroup]
+            kvpairs = [pair for pair in kvpairs if len(pair) == 2]
             kvpairs = [(k.strip(), v.strip()) for k, v in kvpairs]
             kvpairs = [(_snakify_key(k, prefix='participant_'), v) for k, v in kvpairs]
             for k, v in kvpairs:
@@ -310,7 +314,7 @@ class Scraper(object):
         return _stringify_list([a['href'] for a in anchors])
 
 
-def scrape_incidents(df, chrome_options):
+def scrape_incidents(df, chrome_options, thread_idx=0):
     """
     Cracks open a new Chrome browser to extract incident data based on the URL in every field in 
     the dataframe.
@@ -318,10 +322,14 @@ def scrape_incidents(df, chrome_options):
     browser = webdriver.Chrome(options=chrome_options)
 
     new_df = pd.DataFrame([], columns=[*df.columns, *ALL_FIELD_NAMES])
-    print(new_df)
+    # print(new_df)
+    print('Starting new browser')
 
-    for i in df.index.values:
-        sleep(2)
+    sleep(thread_idx * 3)
+
+    for counter, i in enumerate(df.index.values):
+        sleep(3)
+        print(i)
         # Unpack the row.
         row = df.loc[i]
         context = IncidentContext(
@@ -335,10 +343,15 @@ def scrape_incidents(df, chrome_options):
         if browser.current_url.find('http') != -1:
             url = _supplement_next_url(url, browser.current_url)
 
-        print('Querying')
+        # print('Querying')
         browser.get(url)
         # 1. Wait until the page contains meaningful data.
-        browser.find_element_or_wait(By.ID, 'block-system-main')
+        try:
+            browser.find_element_or_wait(By.ID, 'block-system-main')
+        except Exception as ex:
+            print(url)
+            print(ex)
+            return new_df
 
         # 2. Soupify and get incident fields.
         html = browser.page_source
@@ -376,7 +389,7 @@ def scrape_incidents(df, chrome_options):
         ]
 
         # 3. Add incident fields to the row.
-        fields = _normalize(all_fields)
+        fields = _normalize(all_fields, url)
 
         # Temporarily suppress Pandas' SettingWithCopyWarning
         pd.options.mode.chained_assignment = None
@@ -409,11 +422,11 @@ def main():
 
     # print(list(split(df, mp.cpu_count() - 1)))
 
-    # num_threads = mp.cpu_count() - 1
-    num_threads = 3
-    df = df[:num_threads * 4]
+    # num_threads = (mp.cpu_count() // 2) - 1
+    num_threads = 5
+    df = df[:num_threads * 10]
     dfs = list(split(df, num_threads))
-    args_list = [(df, options) for df in dfs]
+    args_list = [(df, options, idx) for idx, df in enumerate(dfs)]
 
     # with mp.Pool(num_threads) as pool:
     with mp.Pool(num_threads) as pool:
