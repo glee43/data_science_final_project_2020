@@ -48,6 +48,25 @@
 | state_house_district        | int                             | congressional house district value                                            | no        |
 | state_senate_district       | int                             | congressional senate district value                                           | no        |
 
+t notes:
+
+-   Each list is encoded as a string with separator `||`. For example, `"a||b"` represents `['a', 'b']`.
+-   Each dict is encoded as a string with outer separator `||` and inner separator `::`. For example, `0::a, 1::b` represents `{0: 'a', 1: 'b'}`.
+-   The "gun ID" and "participant ID" are numbers specific to a given incident that refer to a particular gun/person involved in that incident. For example, this:
+
+    ```
+    participant_age_group = 0::Teen 12-17||1::Adult 18+
+    participant_status = 0::Killed||1::Injured
+    participant_type = 0::Victim||1::Victim
+    ```
+
+    corresponds to this:
+
+    |                    | Age Group  | Status  | Type   |
+    | ------------------ | ---------- | ------- | ------ |
+    | **Participant #0** | Teen 12-17 | Killed  | Victim |
+    | **Participant #1** | Adult 18+  | Injured | Victim |
+
 -   population: contains the fields
 
 | field                      | type  | description                                                                                             | required? |
