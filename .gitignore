@@ -3,3 +3,5 @@ venv/
 **/__pycache__
 data.db
 data/gunviolence.gz
+data/stage3.csv
+.vscode/

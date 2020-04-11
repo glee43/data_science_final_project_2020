@@ -1,7 +1,7 @@
 import sqlite3
 import csv
-import re
 import json
+from cleaning import stripSpecial
 
 '''
     Creates the housing table and add it to data.db
@@ -33,17 +33,6 @@ def getInt(field):
     if field == None or field == "":
         return None
     return int(field)
-
-def stripSpecial(s):
-    # used to make all town,city, and county names
-    # lower case and only a-z characters so that they
-    # are easier to match with dirty data
-    if s == None:
-        return None
-    s = s.lower()
-    rex = re.compile(("[^a-z]"))
-    stripped = re.sub(rex, "", s)
-    return stripped
 
 
 def read_data(filename):
