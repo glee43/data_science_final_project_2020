@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.cluster import KMeans
 
 
-feature_columns = ["Population", "NumIncidents", "HousingPrice", "speechiness", "liveness"]
+feature_columns = ["Population", "NumIncidents", "HousingPrice"]
 
 def read_data(path):
     """
@@ -38,4 +38,6 @@ def sk_learn_cluster(X, K):
     return kmeans.cluster_centers_ , labels
 
 if __name__ == '__main__':
-    kmeans()
+    data_path = "../data/joined_agg.csv" 
+    data = read_data(data_path)
+    

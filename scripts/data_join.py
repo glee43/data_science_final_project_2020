@@ -244,14 +244,3 @@ if __name__ == "__main__":
     # compute the columns that are counts
     condensed_dataset_counts = housing_gv_population_joined.groupby(group_on, as_index=False)[ "Killed"].count()
     condensed_dataset_counts.rename(columns = {"Killed":"NumIncidents"}, inplace=True)
-    # join sums, means, counts
-    final_data = condensed_data.merge(condensed_dataset_counts, left_on=group_on, right_on=group_on, how="inner")
-    if args.yearly and not args.monthly:
-        final_data = final_data.loc[final_data["Year"] < 2018]
-    
-
-    # final columns agg:
-    # [State,City,Killed,Injured,AvgKilled,AvgInjured,Population,Houses,TotalArea,LandArea,NumIncidents]
-
-    final_data.to_csv(save_path)
-    
