@@ -9,13 +9,14 @@ import argparse
 import cleaning
 import numpy as np
 
+
 def load_housing(path):
     '''
     Loads the housing data csv.
     :returns: DataFrame with columns ["State", "City", "Year", "Month", "HousingPrice"]
     '''
     housing = pd.read_csv(housing_path, header=0)
-    
+
     # Clean data into new_rows
     new_rows = []
     for i, j in housing.iterrows():
@@ -31,22 +32,24 @@ def load_housing(path):
                 state = cleaning.standardized_state(x)
             # After column six we get into the monthly price data (starting with 1996-04)
             if y > 5 and not math.isnan(x):
-                #calculate the month based on the column
+                # calculate the month based on the column
                 month = (y-3) % 12 + 1
-                #calculate the year based on the column
-                year = (y-3) // 12 + 1994 
+                # calculate the year based on the column
+                year = (y-3) // 12 + 1994
                 # add row to new dataframe
                 row = [city, state, year, month, int(x)]
                 new_rows.append(row)
-    
+
     # Load new_rows into df
-    new_housing = pd.DataFrame(new_rows, columns=["City", "State", "Year", "Month", "HousingPrice"])
+    new_housing = pd.DataFrame(
+        new_rows, columns=["City", "State", "Year", "Month", "HousingPrice"])
     new_housing = new_housing[new_housing["Year"] > 2012]
 
     cols = ["State", "City", "Year", "Month", "HousingPrice"]
     new_housing = new_housing[cols]
-    
+
     return new_housing
+
 
 def load_population(path):
     '''
@@ -54,21 +57,25 @@ def load_population(path):
     :returns: DataFrame with columns ["State", "City", "Population", "Houses", "TotalArea", "LandArea", "PopDensity", "HouseDensity"]
     '''
     raw_data = pd.read_csv(population_path, header=1)
-    cols = ["State", "City", "Population", "Houses", "TotalArea", "LandArea", "PopDensity", "HouseDensity"]
+    cols = ["State", "City", "Population", "Houses",
+            "TotalArea", "LandArea", "PopDensity", "HouseDensity"]
     # extract important columns
-    data = raw_data.iloc[:, [2,6,7,8,9,11,12,13]]
+    data = raw_data.iloc[:, [2, 6, 7, 8, 9, 11, 12, 13]]
     data.columns = cols
     # clean all the columns
-    data.loc[:,"State"] = data.loc[:,"State"].apply(cleaning.standardized_state)
-    data.loc[:,"City"] = data.loc[:,"City"].apply(cleaning.clean_pop_city_county)
+    data.loc[:, "State"] = data.loc[:, "State"].apply(
+        cleaning.standardized_state)
+    data.loc[:, "City"] = data.loc[:, "City"].apply(
+        cleaning.clean_pop_city_county)
     for i in ["Population", "Houses"]:
-        data.loc[:,i] = data.loc[:,i].apply(cleaning.clean_pop_int)
+        data.loc[:, i] = data.loc[:, i].apply(cleaning.clean_pop_int)
     for i in ["TotalArea", "LandArea", "PopDensity", "HouseDensity"]:
-        data.loc[:,i] = data.loc[:,i].apply(cleaning.clean_pop_float)
+        data.loc[:, i] = data.loc[:, i].apply(cleaning.clean_pop_float)
     # discard areas of no land
     data = data.loc[data["LandArea"] > 0]
 
     return data
+
 
 def load_gun_violence(path):
     '''
@@ -76,28 +83,33 @@ def load_gun_violence(path):
     :returns: DataFrame
     '''
     raw_data = pd.read_csv(gun_violence_path, header=0)
-    data = raw_data.loc[:,["date", "state", "city_or_county", "n_killed", "n_injured"]]
+    data = raw_data.loc[:, ["date", "state",
+                            "city_or_county", "n_killed", "n_injured"]]
     cols = ["Year", "State", "City", "Killed", "Injured"]
     data.columns = cols
     data["Month"] = data["Year"]
     # clean the columns
-    data.loc[:,"State"] = data.loc[:,"State"].apply(cleaning.standardized_state)
-    data.loc[:,"City"] = data.loc[:,"City"].apply(cleaning.clean_gv_city) 
+    data.loc[:, "State"] = data.loc[:, "State"].apply(
+        cleaning.standardized_state)
+    data.loc[:, "City"] = data.loc[:, "City"].apply(cleaning.clean_gv_city)
     for i in ["Killed", "Injured"]:
-        data.loc[:,i] = data.loc[:,i].apply(lambda x: int(x))
+        data.loc[:, i] = data.loc[:, i].apply(lambda x: int(x))
     # discard county data
     data = data.loc[data["City"] != "COUNTYDATA"]
     # break data into month, year fields
-    data.loc[:,"Month"] = data.loc[:,"Month"].apply(lambda x: int(x.split("-")[1]))
-    data.loc[:,"Year"] = data.loc[:,"Year"].apply(lambda x: int(x.split("-")[0]))
+    data.loc[:, "Month"] = data.loc[:, "Month"].apply(
+        lambda x: int(x.split("-")[1]))
+    data.loc[:, "Year"] = data.loc[:, "Year"].apply(
+        lambda x: int(x.split("-")[0]))
 
     # reorder cols
     cols = ["State", "City", "Year", "Month", "Killed", "Injured"]
     data = data[cols]
 
     # print(data.loc[:5])
-    
+
     return data
+
 
 def analyze_david(housing, population, gun_violence) -> None:
     """
@@ -112,7 +124,7 @@ def analyze_david(housing, population, gun_violence) -> None:
     print('(This obscures instances where different states have the same city name)')
 
     # Also worth thinking about: cities that have same names as counties and vice versa?
-    
+
     print()
     print('=== Set Intersection ===')
     print(f'Total intersection: {len(hoc.intersection(ppc).intersection(gvc))}')
@@ -121,8 +133,10 @@ def analyze_david(housing, population, gun_violence) -> None:
     print(f'p/gv: {len(ppc.intersection(gvc))}')
 
     dropped_h_gv_from_gv = gvc.difference(hoc)
-
     print('dropped_h_gv_from_gv', list(dropped_h_gv_from_gv)[0:20])
+
+    dropped_h_gv_from_h = hoc.difference(gvc)
+    print('dropped_h_gv_from_h', list(dropped_h_gv_from_h)[0:450:15])
 
     print('=== Set Difference ===')
     print('TODO')
@@ -130,10 +144,9 @@ def analyze_david(housing, population, gun_violence) -> None:
     pass
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Join multiple datasets")
-    
+
     # paths to data
     housing_path = "../data/housing_city_monthly.csv"
     population_path = "../data/population.csv"
@@ -143,7 +156,7 @@ if __name__ == "__main__":
     housing = load_housing(housing_path)
     # print("housing num")
     # print(housing.count())
-    
+
     population = load_population(population_path)
     # print(population.head(10))
     gun_violence = load_gun_violence(gun_violence_path)
@@ -154,12 +167,14 @@ if __name__ == "__main__":
     analyze_david(housing, population, gun_violence)
 
     # joining housing and gv on ["State", "City", "Month", "Year"] resulting in table ["State", "City", "Year", "Month", "HousingPrice", "Killed", "Injured"]
-    housing_gv_joined = housing.merge(gun_violence, left_on=["State", "City", "Month", "Year"], right_on=["State", "City", "Month", "Year"], how="left")
+    housing_gv_joined = housing.merge(gun_violence, left_on=["State", "City", "Month", "Year"], right_on=[
+                                      "State", "City", "Month", "Year"], how="left")
     # print("housing and gun violence data joined")
     # print(housing_gv_joined.count())
 
     # joining housing_gv_joined and population on  ["State", "City"]
-    housing_gv_population_joined = housing_gv_joined.merge(population, left_on=["State", "City"], right_on=["State", "City"], how="inner")
+    housing_gv_population_joined = housing_gv_joined.merge(
+        population, left_on=["State", "City"], right_on=["State", "City"], how="inner")
     print("housing, gv, and population joined")
     # print(f"total: {housing_gv_population_joined.count()}")
     # print(housing_gv_population_joined.head(10))
@@ -187,8 +202,3 @@ if __name__ == "__main__":
     # print(condensed_dataset_sums.head(10))
     # print(condensed_dataset_avgs.head(10))
     # condensed_datset_counts = housing_gv_population_joined.loc(housing_gv_population_joined["killed"] != ).grouby(group_on)[""]
-
-
-    
-
-

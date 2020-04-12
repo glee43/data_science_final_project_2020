@@ -4,6 +4,7 @@ Helper functions used to clean data
 
 import re
 
+
 def strip_special(s):
     '''
     used to make all town, city, and county names
@@ -33,13 +34,15 @@ def clean_pop_city_county(s):
     city = strip_special(city)
 
     # If the suffix is one of these place designations, remove it.
-    place_designations = ['county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town', 'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'township', 'purchase', 'municipality']
+    place_designations = ['county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
+                          'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'township', 'purchase', 'municipality']
     if suffix in place_designations:
         return city[:-len(suffix)]
     else:
         # in this case it is probably a county name
         # so there's nothing we can do about it
         return city
+
 
 def clean_pop_int(i):
     '''
@@ -48,6 +51,7 @@ def clean_pop_int(i):
     '''
     pop = int(i.split("(")[0])
     return pop
+
 
 def clean_pop_float(i) -> float:
     '''
@@ -65,27 +69,53 @@ def clean_pop_float(i) -> float:
 # ———————————————————————————————————
 # GV Dataset
 
+
 def clean_gv_city(s: str) -> str:
     '''
     Clean the city/county/borough data into a standardized city string.
     '''
-    is_county_name = s.endswith("(county)") or (len(s) > 7 and s.endswith(" County"))
+    is_county_name = s.endswith("(county)") or (
+        len(s) > 7 and s.endswith(" County"))
     if is_county_name:
         return 'GZCOUNTYDATA'
 
-    
     city = strip_special(s)
-    redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
-        'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
-        'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
-        'junedale', 'upperstclair', 'ballwinmanchester', 'redwoodestates',
-        'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
-        'sixmilerun', 'lakewoodjointbaselewismcchord']
+    out = city
+    redlist = ['plaintownship', 'chincoteagueisland', 'nineveh', 'rainiervalley', 'thornebay', 'kendallpark', 'larimer', 'pottsgrove', 'newcaney',
+               'orangemound', 'searingtown', 'baypoint', 'jamescity', 'virgie', 'eastamherst', 'canandaigua', 'sandoval', 'meally', 'daltontownship', 'hamptonbeach']
 
-    neighborhood_match = re.compile('^([\w\s\.]+) (\([\w\s\.]+\))$').match(s)
-    if neighborhood_match and city in redlist:
-        city, county = neighborhood_match.groups()
-        print(city, county)
+    neighborhood_match = re.compile(r'^([\w\s\.]+) \(([\w\s\.]+)\)$').match(s)
+    if neighborhood_match:
+        left, right = neighborhood_match.groups()
+        # print(f'left: "{left}", right: "{right}"')
+
+        # Usually, LEFT is the city name, and RIGHT is the inner neighborhood.
+        # There are some explicit exceptions that will be recognized here:
+        especial_cities = ["Manchester", "Chincoteague"]
+        if right in especial_cities:
+            out = strip_special(right)
+        else:
+            out = strip_special(left)
+
+    if out in redlist:
+        print('REDLIST')
+        print(f'{s} | {out} | {bool(neighborhood_match)}')
+
+    # if city in redlist:
+    #     print(f'original string: {s}')
+    #     if neighborhood_match:
+    #         left, right = neighborhood_match.groups()
+    #         print(f'left: "{left}", right: "{right}"')
+
+    #         # Usually, LEFT is the city name, and RIGHT is the inner neighborhood.
+    #         # There are some explicit exceptions that will be recognized here:
+    #         especial_cities = ["Manchester"]
+    #         if right in especial_cities:
+    #             out = strip_special(right)
+    #         else:
+    #             out = strip_special(left)
+    #     print(f'out: "{out}"')
+    #     print('—————')
 
     # city = strip_special(s)
     # redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
@@ -97,7 +127,8 @@ def clean_gv_city(s: str) -> str:
     # if city in redlist:
     #     print(s, city)
 
-    return city
+    return out
+
 
 def standardized_state(s: str) -> str:
     '''
@@ -158,7 +189,7 @@ def standardized_state(s: str) -> str:
         "wyoming": "wy",
         "puertorico": "pr",
         "districtofcolumbia": "dc"
-        }
+    }
     if len(s) == 2:
         return s
     else:
