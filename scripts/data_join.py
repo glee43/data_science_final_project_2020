@@ -7,6 +7,7 @@ import math
 import pandas as pd
 import argparse
 import cleaning
+import numpy as np
 
 def load_housing(path):
     '''
@@ -167,16 +168,25 @@ if __name__ == "__main__":
     yearly = False
 
     group_on = ["State", "City"]
-    if not yearly and not monthly:
+    if monthly:
         group_on.append("Year")
         group_on.append("Month")
-    elif yearly and not monthly:
-        group_on.append("Month")
+    elif yearly:
+        group_on.append("Year")
 
     condensed_dataset = pd.DataFrame()
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"]
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Population", "Houses", "TotalArea", "LandArea"]
-    condensed_datset_counts = housing_gv_population_joined.loc(housing_gv_population_joined["killed"] != ).grouby(group_on)[""]
+    # a = housing_gv_population_joined.groupby(group_on)
+    # condensed_dataset["Killed", "Injured"] = a["Killed", "Injured"].sum()
+    # condensed_dataset["Population", "Houses", "TotalArea", "LandArea"] = a["Population", "Houses", "TotalArea", "LandArea"].mean()
+    # print(condensed_dataset.head(30))
+
+    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"].sum()
+    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Population", "Houses", "TotalArea", "LandArea"].mean()
+    condensed_data = condensed_dataset_sums.merge(condensed_dataset_avgs, on=group_on, how="inner")
+    print(condensed_data.head(20))
+    # print(condensed_dataset_sums.head(10))
+    # print(condensed_dataset_avgs.head(10))
+    # condensed_datset_counts = housing_gv_population_joined.loc(housing_gv_population_joined["killed"] != ).grouby(group_on)[""]
 
 
     
