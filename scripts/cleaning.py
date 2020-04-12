@@ -122,14 +122,6 @@ def clean_pop_city_county(s: str) -> str:
     elif suffix in place_designations_crop:
         out = city[:-len(suffix)]
 
-    if out == 'aaronsburgcdpcentrecounty':
-        print('!!')
-        print(s)
-        print(raw_city)
-        print(city)
-        print(suffix)
-        print(out)
-
     return correct_city_name(out)
 
 
