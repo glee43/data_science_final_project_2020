@@ -44,7 +44,9 @@ def load_housing(path):
     # Load new_rows into df
     new_housing = pd.DataFrame(
         new_rows, columns=["City", "State", "Year", "Month", "HousingPrice"])
-    new_housing = new_housing[new_housing["Year"] > 2012]
+    new_housing = new_housing[new_housing["Year"] > 2013]
+    new_housing = new_housing[(new_housing["Year"] < 2018) | ((new_housing["Month"] < 4) & (new_housing["Year"] == 2018))]
+
 
     cols = ["State", "City", "Year", "Month", "HousingPrice"]
     new_housing = new_housing[cols]
@@ -106,7 +108,7 @@ def load_gun_violence(path):
     # reorder cols
     cols = ["State", "City", "Year", "Month", "Killed", "Injured"]
     data = data[cols]
-
+    data = data.loc[data["Year"] > 2013]
 
     return data
 
@@ -185,11 +187,19 @@ if __name__ == "__main__":
                     action="store_true")
     parser.add_argument("--yearly", help="Compile the data with a yearly resoultion",
                     action="store_true")
+    args = parser.parse_args()
 
     # paths to data
     housing_path = "../data/housing_city_monthly.csv"
     population_path = "../data/population.csv"
     gun_violence_path = "../data/stage3.csv"
+    save_path = "../data/joined"
+    if args.monthly:
+        save_path += "_monthly.csv"
+    elif args.yearly:
+        save_path += "_yearly.csv"
+    else:
+        save_path += "_agg.csv"
 
     # load csv's into dataframes
     housing = load_housing(housing_path)
@@ -207,28 +217,34 @@ if __name__ == "__main__":
     housing_gv_population_joined = housing_gv_joined.merge(
         population, left_on=["State", "City"], right_on=["State", "City"], how="inner")
 
-    monthly = False
-    yearly = False
-
     group_on = ["State", "City"]
-    if monthly:
+    if args.monthly:
         group_on.append("Year")
         group_on.append("Month")
-    elif yearly:
+    elif args.yearly:
         group_on.append("Year")
 
     condensed_dataset = pd.DataFrame()
 
     # compute the columns that are sums
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"].sum()
+    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on, as_index=False)["Killed", "Injured"].sum()
     # compute the columns that are means
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea"].mean()
+    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on, as_index=False)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea", "PopDensity", "HouseDensity", "HousingPrice"].mean()
     condensed_dataset_avgs.rename(columns = {"Killed":"AvgKilled", "Injured":"AvgInjured"}, inplace=True)
     # join sums an dmeans
     condensed_data = condensed_dataset_sums.merge(condensed_dataset_avgs, on=group_on, how="inner")
+    condensed_data.reset_index()
     # compute the columns that are counts
-    condensed_dataset_counts = housing_gv_population_joined.groupby(group_on)["Killed"].count()
+    condensed_dataset_counts = housing_gv_population_joined.groupby(group_on, as_index=False)[ "Killed"].count()
     condensed_dataset_counts.rename(columns = {"Killed":"NumIncidents"}, inplace=True)
     # join sums, means, counts
-    final_data = condensed_data.merge(condensed_dataset_counts, on=group_on, how="inner")
-    print(final_data.head(20))
+    final_data = condensed_data.merge(condensed_dataset_counts, left_on=group_on, right_on=group_on, how="inner")
+    if args.yearly and not args.monthly:
+        final_data = final_data.loc[final_data["Year"] < 2018]
+    
+
+    # final columns agg:
+    # [State,City,Killed,Injured,AvgKilled,AvgInjured,Population,Houses,TotalArea,LandArea,NumIncidents]
+
+    final_data.to_csv(save_path)
+    
