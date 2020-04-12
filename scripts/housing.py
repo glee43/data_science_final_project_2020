@@ -1,7 +1,7 @@
 import sqlite3
 import csv
 import json
-from cleaning import stripSpecial
+from cleaning import strip_special
 
 '''
     Creates the housing table and add it to data.db
@@ -60,9 +60,9 @@ def read_data(filename):
                 prices = dict(zip(dates, [getInt(x) for x in row[6:]]))
                 c.execute('INSERT INTO housing VALUES \
                     (?, ?, ?, ?)',
-                        (stripSpecial(fields["city"]),
-                        stripSpecial(fields["state"]),
-                        stripSpecial(fields["county"]),
+                        (strip_special(fields["city"]),
+                        strip_special(fields["state"]),
+                        strip_special(fields["county"]),
                         json.dumps(prices)))
                 conn.commit()
 

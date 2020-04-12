@@ -4,26 +4,107 @@ Helper functions used to clean data
 
 import re
 
-def stripSpecial(s):
+def strip_special(s):
     '''
-    used to make all town,city, and county names
+    used to make all town, city, and county names
     lower case and only a-z characters so that they
     are easier to match with dirty data
     '''
-    if s == None:
-        return None
     s = s.lower()
     rex = re.compile(("[^a-z]"))
     stripped = re.sub(rex, "", s)
     return stripped
 
-def
 
-def standardizedState(s):
+# ———————————————————————————————————
+# Population Dataset
+
+def clean_pop_city_county(s):
     '''
-    Converts a state name to its postal code, or
-    leaves it as is if it is already a postal code.
+    Extracts the city name from the population dataset.
+    The column with the city data is formatted as either
+    (city, county), or just (city), or just (county) and is 
+    not consistent. 
+    City names have either "town", "city", or "CDP" appended
+    to their names depending on their designation
     '''
+    city = s.split(",")[0]
+    suffix = city.split(" ")[-1]
+    city = strip_special(city)
+
+    # If the suffix is one of these place designations, remove it.
+    place_designations = ['county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town', 'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'township', 'purchase', 'municipality']
+    if suffix in place_designations:
+        return city[:-len(suffix)]
+    else:
+        # in this case it is probably a county name
+        # so there's nothing we can do about it
+        return city
+
+def clean_pop_int(i):
+    '''
+    Some population fields have additional info in 
+    parentheses
+    '''
+    pop = int(i.split("(")[0])
+    return pop
+
+def clean_pop_float(i) -> float:
+    '''
+    Some population density fields are undefined because
+    they have no land area, so their density info 
+    appears as (X). This function will map non float
+    values to -1.
+    '''
+    try:
+        f = float(i)
+        return f
+    except ValueError:
+        return -1.0
+
+# ———————————————————————————————————
+# GV Dataset
+
+def clean_gv_city(s: str) -> str:
+    '''
+    Clean the city/county/borough data into a standardized city string.
+    '''
+    is_county_name = s.endswith("(county)") or (len(s) > 7 and s.endswith(" County"))
+    if is_county_name:
+        return 'GZCOUNTYDATA'
+
+    
+    city = strip_special(s)
+    redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
+        'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
+        'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
+        'junedale', 'upperstclair', 'ballwinmanchester', 'redwoodestates',
+        'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
+        'sixmilerun', 'lakewoodjointbaselewismcchord']
+
+    neighborhood_match = re.compile('^([\w\s\.]+) (\([\w\s\.]+\))$').match(s)
+    if neighborhood_match and city in redlist:
+        city, county = neighborhood_match.groups()
+        print(city, county)
+
+    # city = strip_special(s)
+    # redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
+    #     'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
+    #     'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
+    #     'junedale', 'upperstclair', 'ballwinmanchester', 'redwoodestates',
+    #     'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
+    #     'sixmilerun', 'lakewoodjointbaselewismcchord']
+    # if city in redlist:
+    #     print(s, city)
+
+    return city
+
+def standardized_state(s: str) -> str:
+    '''
+    :param s: State name or its 2-letter postal code.
+    :return: The state's 2-letter postal code.
+    '''
+    s = strip_special(s)
     d = {
         "alabama": "al",
         "alaska": "ak",
