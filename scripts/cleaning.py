@@ -31,10 +31,11 @@ def clean_pop_city_county(s):
     '''
     city = s.split(",")[0]
     suffix = city.split(" ")[-1]
+    suffix = strip_special(suffix)
     city = strip_special(city)
 
     # If the suffix is one of these place designations, remove it.
-    place_designations_crop = ['county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
+    place_designations_crop = ['cdp', 'county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
                                'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'purchase', 'municipality']
     # place_designations_keep = ['township']
 
@@ -188,6 +189,42 @@ def standardized_state(s: str) -> str:
         "pennsylvania": "pa",
         "rhodeisland": "ri",
         "southcarolina": "sc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
         "southdakota": "sd",
         "tennessee": "tn",
         "texas": "tx",

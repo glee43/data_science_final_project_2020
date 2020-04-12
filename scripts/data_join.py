@@ -8,6 +8,7 @@ import pandas as pd
 import argparse
 import cleaning
 import numpy as np
+import csv
 
 
 def load_housing(path):
@@ -106,7 +107,6 @@ def load_gun_violence(path):
     cols = ["State", "City", "Year", "Month", "Killed", "Injured"]
     data = data[cols]
 
-    # print(data.loc[:5])
 
     return data
 
@@ -185,6 +185,10 @@ H/P difference in H: {list(dropped_h_p_from_h)[1 :: len(dropped_h_p_from_h) // 2
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Join multiple datasets")
+    parser.add_argument("--monthly", help="Compile the data with a monthly resolution",
+                    action="store_true")
+    parser.add_argument("--yearly", help="Compile the data with a yearly resoultion",
+                    action="store_true")
 
     # paths to data
     housing_path = "../data/housing_city_monthly.csv"
@@ -193,30 +197,19 @@ if __name__ == "__main__":
 
     # load csv's into dataframes
     housing = load_housing(housing_path)
-    # print("housing num")
-    # print(housing.count())
-
     population = load_population(population_path)
-    # print(population.head(10))
     gun_violence = load_gun_violence(gun_violence_path)
-    # print("gun violence num")
-    # print(gun_violence.count())
 
     # David's Analysis
-    analyze_david(housing, population, gun_violence)
+    # analyze_david(housing, population, gun_violence)
 
     # joining housing and gv on ["State", "City", "Month", "Year"] resulting in table ["State", "City", "Year", "Month", "HousingPrice", "Killed", "Injured"]
     housing_gv_joined = housing.merge(gun_violence, left_on=["State", "City", "Month", "Year"], right_on=[
                                       "State", "City", "Month", "Year"], how="left")
-    # print("housing and gun violence data joined")
-    # print(housing_gv_joined.count())
 
     # joining housing_gv_joined and population on  ["State", "City"]
     housing_gv_population_joined = housing_gv_joined.merge(
         population, left_on=["State", "City"], right_on=["State", "City"], how="inner")
-    print("housing, gv, and population joined")
-    # print(f"total: {housing_gv_population_joined.count()}")
-    # print(housing_gv_population_joined.head(10))
 
     monthly = False
     yearly = False
@@ -229,18 +222,17 @@ if __name__ == "__main__":
         group_on.append("Year")
 
     condensed_dataset = pd.DataFrame()
-    # a = housing_gv_population_joined.groupby(group_on)
-    # condensed_dataset["Killed", "Injured"] = a["Killed", "Injured"].sum()
-    # condensed_dataset["Population", "Houses", "TotalArea", "LandArea"] = a["Population", "Houses", "TotalArea", "LandArea"].mean()
-    # print(condensed_dataset.head(30))
 
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)[
-        "Killed", "Injured"].sum()
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(
-        group_on)["Population", "Houses", "TotalArea", "LandArea"].mean()
-    condensed_data = condensed_dataset_sums.merge(
-        condensed_dataset_avgs, on=group_on, how="inner")
-    print(condensed_data.head(20))
-    # print(condensed_dataset_sums.head(10))
-    # print(condensed_dataset_avgs.head(10))
-    # condensed_datset_counts = housing_gv_population_joined.loc(housing_gv_population_joined["killed"] != ).grouby(group_on)[""]
+    # compute the columns that are sums
+    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"].sum()
+    # compute the columns that are means
+    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea"].mean()
+    condensed_dataset_avgs.rename(columns = {"Killed":"AvgKilled", "Injured":"AvgInjured"}, inplace=True)
+    # join sums an dmeans
+    condensed_data = condensed_dataset_sums.merge(condensed_dataset_avgs, on=group_on, how="inner")
+    # compute the columns that are counts
+    condensed_dataset_counts = housing_gv_population_joined.groupby(group_on)["Killed"].count()
+    condensed_dataset_counts.rename(columns = {"Killed":"NumIncidents"}, inplace=True)
+    # join sums, means, counts
+    final_data = condensed_data.merge(condensed_dataset_counts, on=group_on, how="inner")
+    print(final_data.head(20))
