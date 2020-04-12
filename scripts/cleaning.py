@@ -31,10 +31,11 @@ def clean_pop_city_county(s):
     '''
     city = s.split(",")[0]
     suffix = city.split(" ")[-1]
+    suffix = strip_special(suffix)
     city = strip_special(city)
 
     # If the suffix is one of these place designations, remove it.
-    place_designations = ['county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
+    place_designations = ['CDP','county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
                           'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'township', 'purchase', 'municipality']
     if suffix in place_designations:
         return city[:-len(suffix)]
