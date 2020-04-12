@@ -115,31 +115,66 @@ def analyze_david(housing, population, gun_violence) -> None:
     """
     Random fns
     """
-
     hoc = set(housing['City'].tolist())
     ppc = set(population['City'].tolist())
     gvc = set(gun_violence['City'].tolist())
 
-    print(f'City counts: h: {len(hoc)}, p: {len(ppc)}, gv: {len(gvc)}')
-    print('(This obscures instances where different states have the same city name)')
-
     # Also worth thinking about: cities that have same names as counties and vice versa?
 
-    print()
-    print('=== Set Intersection ===')
-    print(f'Total intersection: {len(hoc.intersection(ppc).intersection(gvc))}')
-    print(f'h/gv: {len(hoc.intersection(gvc))}')
-    print(f'h/p: {len(hoc.intersection(ppc))}')
-    print(f'p/gv: {len(ppc.intersection(gvc))}')
+    dropped_h_gv_from_gv = sorted(gvc.difference(hoc))
+    dropped_h_gv_from_h = sorted(hoc.difference(gvc))
 
-    dropped_h_gv_from_gv = gvc.difference(hoc)
-    print('dropped_h_gv_from_gv', list(dropped_h_gv_from_gv)[0:20])
+    dropped_h_p_from_p = sorted(ppc.difference(hoc))
+    dropped_h_p_from_h = sorted(hoc.difference(ppc))
 
-    dropped_h_gv_from_h = hoc.difference(gvc)
-    print('dropped_h_gv_from_h', list(dropped_h_gv_from_h)[0:450:15])
+    # Write to txt file.
+    with open('david_analysis.txt', 'w+') as f:
+        f.write(f"""
+=== Numbers ===
+City counts: h: {len(hoc)}, p: {len(ppc)}, gv: {len(gvc)}
+(This obscures instances where different states have the same city name)
 
-    print('=== Set Difference ===')
-    print('TODO')
+=== Numbers: Set Intersection ===
+Total intersection: {len(hoc.intersection(ppc).intersection(gvc))}
+h/gv: {len(hoc.intersection(gvc))}
+h/p: {len(hoc.intersection(ppc))}
+p/gv: {len(ppc.intersection(gvc))}
+
+dropped_h_gv_from_gv: {len(dropped_h_gv_from_gv)}
+dropped_h_gv_from_h: {len(dropped_h_gv_from_h)}
+
+dropped_h_p_from_p: {len(dropped_h_p_from_p)}
+dropped_h_p_from_h: {len(dropped_h_p_from_h)}
+
+=== Samples: Set Differences ===
+
+dropped_h_gv_from_gv: {list(dropped_h_gv_from_gv)[0 : len(dropped_h_gv_from_gv) : len(dropped_h_gv_from_gv) // 20]}
+dropped_h_gv_from_h: {list(dropped_h_gv_from_h)[0 : len(dropped_h_gv_from_h) : len(dropped_h_gv_from_h) // 20]}
+
+dropped_h_p_from_p: {list(dropped_h_p_from_p)[0 : len(dropped_h_p_from_p) : len(dropped_h_p_from_p) // 20]}
+dropped_h_p_from_h: {list(dropped_h_p_from_h)[0 : len(dropped_h_p_from_h) : len(dropped_h_p_from_h) // 20]}
+
+=== Raw data ===
+
+——— dropped_h_gv_from_gv ---
+{' '.join(list(dropped_h_gv_from_gv))}
+
+---dropped_h_gv_from_h ---
+{' '.join(list(dropped_h_gv_from_h))}
+        """)
+
+        # f.write('=== Numbers ===')
+        # f.write(f'City counts: h: {len(hoc)}, p: {len(ppc)}, gv: {len(gvc)}')
+        # f.write(
+        #     f'(This obscures instances where different states have the same city name)')
+        # f.write('\n')
+        # f.write('=== Numbers: Set Intersection ===')
+        # f.write(
+        #     f'Total intersection: {len(hoc.intersection(ppc).intersection(gvc))}')
+        # f.write(f'h/gv: {len(hoc.intersection(gvc))}')
+        # f.write(f'h/p: {len(hoc.intersection(ppc))}')
+        # f.write(f'p/gv: {len(ppc.intersection(gvc))}')
+        # f.write('\n')
 
     pass
 

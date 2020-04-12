@@ -5,3 +5,5 @@ data.db
 data/gunviolence.gz
 data/stage3.csv
 .vscode/
+
+scripts/david_analysis.txt

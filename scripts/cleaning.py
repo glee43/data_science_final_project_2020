@@ -5,7 +5,7 @@ Helper functions used to clean data
 import re
 
 
-def strip_special(s):
+def strip_special(s: str) -> str:
     '''
     used to make all town, city, and county names
     lower case and only a-z characters so that they
@@ -14,11 +14,11 @@ def strip_special(s):
     s = s.lower()
     rex = re.compile(("[^a-z]"))
     stripped = re.sub(rex, "", s)
-    return stripped
-
+    return str(stripped)
 
 # ———————————————————————————————————
 # Population Dataset
+
 
 def clean_pop_city_county(s):
     '''
@@ -35,9 +35,13 @@ def clean_pop_city_county(s):
     city = strip_special(city)
 
     # If the suffix is one of these place designations, remove it.
-    place_designations = ['CDP','county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
-                          'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'township', 'purchase', 'municipality']
-    if suffix in place_designations:
+    place_designations_crop = ['cdp', 'county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
+                               'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'purchase', 'municipality']
+    # place_designations_keep = ['township']
+
+    if suffix is 'county':
+        return 'POPCOUNTYDATA'
+    elif suffix in place_designations_crop:
         return city[:-len(suffix)]
     else:
         # in this case it is probably a county name
@@ -82,7 +86,7 @@ def clean_gv_city(s: str) -> str:
 
     city = strip_special(s)
     out = city
-    redlist = ['plaintownship', 'chincoteagueisland', 'nineveh', 'rainiervalley', 'thornebay', 'kendallpark', 'larimer', 'pottsgrove', 'newcaney',
+    redlist = ['plaintownship', 'argentinetownship', 'statenisland', 'sunsetharbor', 'thornebay', 'kendallpark', 'larimer', 'pottsgrove', 'newcaney',
                'orangemound', 'searingtown', 'baypoint', 'jamescity', 'virgie', 'eastamherst', 'canandaigua', 'sandoval', 'meally', 'daltontownship', 'hamptonbeach']
 
     neighborhood_match = re.compile(r'^([\w\s\.]+) \(([\w\s\.]+)\)$').match(s)
@@ -98,35 +102,42 @@ def clean_gv_city(s: str) -> str:
         else:
             out = strip_special(left)
 
-    if out in redlist:
-        print('REDLIST')
-        print(f'{s} | {out} | {bool(neighborhood_match)}')
+    # Certain values will be manually overwritten (boroughs -> cities, etc.)
+    exception_dict = {
+        'statenisland': 'newyorkcity'
+    }
+    if out in exception_dict.keys():
+        out = exception_dict[out]
 
-    # if city in redlist:
-    #     print(f'original string: {s}')
-    #     if neighborhood_match:
-    #         left, right = neighborhood_match.groups()
-    #         print(f'left: "{left}", right: "{right}"')
+    # if out in redlist:
+    #     print('REDLIST')
+    #     print(f'{s} | {out} | {bool(neighborhood_match)}')
 
-    #         # Usually, LEFT is the city name, and RIGHT is the inner neighborhood.
-    #         # There are some explicit exceptions that will be recognized here:
-    #         especial_cities = ["Manchester"]
-    #         if right in especial_cities:
-    #             out = strip_special(right)
-    #         else:
-    #             out = strip_special(left)
-    #     print(f'out: "{out}"')
-    #     print('—————')
+        # if city in redlist:
+        #     print(f'original string: {s}')
+        #     if neighborhood_match:
+        #         left, right = neighborhood_match.groups()
+        #         print(f'left: "{left}", right: "{right}"')
 
-    # city = strip_special(s)
-    # redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
-    #     'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
-    #     'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
-    #     'junedale', 'upperstclair', 'ballwinmanchester', 'redwoodestates',
-    #     'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
-    #     'sixmilerun', 'lakewoodjointbaselewismcchord']
-    # if city in redlist:
-    #     print(s, city)
+        #         # Usually, LEFT is the city name, and RIGHT is the inner neighborhood.
+        #         # There are some explicit exceptions that will be recognized here:
+        #         especial_cities = ["Manchester"]
+        #         if right in especial_cities:
+        #             out = strip_special(right)
+        #         else:
+        #             out = strip_special(left)
+        #     print(f'out: "{out}"')
+        #     print('—————')
+
+        # city = strip_special(s)
+        # redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
+        #     'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
+        #     'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
+        #     'junedale', 'upperstclair', 'ballwinmanchester', 'redwoodestates',
+        #     'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
+        #     'sixmilerun', 'lakewoodjointbaselewismcchord']
+        # if city in redlist:
+        #     print(s, city)
 
     return out
 
@@ -189,7 +200,43 @@ def standardized_state(s: str) -> str:
         "wisconsin": "wi",
         "wyoming": "wy",
         "puertorico": "pr",
-        "districtofcolumbia": "dc"
+        "districtofcolumbia": "dc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
+        "southdakota": "sd",
+        "tennessee": "tn",
+        "texas": "tx",
+        "utah": "ut",
+        "vermont": "vt",
+        "virginia": "va",
+        "washington": "wa",
+        "westvirginia": "wv",
+        "wisconsin": "wi",
+        "wyoming": "wy",
+        "puertorico": "pr",
+        "districtofcolumbia": "dc",
     }
     if len(s) == 2:
         return s
