@@ -28,7 +28,7 @@ def load_housing(path):
             # The second column ('RegionName') contains the city name
             if y == 1:
                 # lowercase the city name and make it a-z chars
-                city = cleaning.clean_housing_region(x, col)
+                city = cleaning.clean_housing_city(x, col)
             if y == 2:
                 state = cleaning.standardized_state(x)
             # After column six we get into the monthly price data (starting with 1996-04)
@@ -61,7 +61,7 @@ def load_population(path):
     cols = ["State", "City", "Population", "Houses",
             "TotalArea", "LandArea", "PopDensity", "HouseDensity"]
     # extract important columns
-    data = raw_data.iloc[:, [2, 6, 7, 8, 9, 11, 12, 13]]
+    data = raw_data.iloc[:, [2, 5, 7, 8, 9, 11, 12, 13]]
     data.columns = cols
     # clean all the columns
     data.loc[:, "State"] = data.loc[:, "State"].apply(
