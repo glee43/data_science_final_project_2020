@@ -20,15 +20,15 @@ def load_housing(path):
 
     # Clean data into new_rows
     new_rows = []
-    for i, j in housing.iterrows():
+    for i, col in housing.iterrows():
         city = ""
         state = ""
         # Iterate over each column in each row
-        for y, x in enumerate(j):
+        for y, x in enumerate(col):
             # The second column ('RegionName') contains the city name
             if y == 1:
                 # lowercase the city name and make it a-z chars
-                city = cleaning.strip_special(x)
+                city = cleaning.clean_housing_city(x, col)
             if y == 2:
                 state = cleaning.standardized_state(x)
             # After column six we get into the monthly price data (starting with 1996-04)
@@ -63,7 +63,7 @@ def load_population(path):
     cols = ["State", "City", "Population", "Houses",
             "TotalArea", "LandArea", "PopDensity", "HouseDensity"]
     # extract important columns
-    data = raw_data.iloc[:, [2, 6, 7, 8, 9, 11, 12, 13]]
+    data = raw_data.iloc[:, [2, 5, 7, 8, 9, 11, 12, 13]]
     data.columns = cols
     # clean all the columns
     data.loc[:, "State"] = data.loc[:, "State"].apply(
@@ -150,11 +150,15 @@ dropped_h_p_from_h: {len(dropped_h_p_from_h)}
 
 === Samples: Set Differences ===
 
-dropped_h_gv_from_gv: {list(dropped_h_gv_from_gv)[0 : len(dropped_h_gv_from_gv) : len(dropped_h_gv_from_gv) // 20]}
-dropped_h_gv_from_h: {list(dropped_h_gv_from_h)[0 : len(dropped_h_gv_from_h) : len(dropped_h_gv_from_h) // 20]}
+H/GV difference in GV: {list(dropped_h_gv_from_gv)[1 :: len(dropped_h_gv_from_gv) // 25]}
 
-dropped_h_p_from_p: {list(dropped_h_p_from_p)[0 : len(dropped_h_p_from_p) : len(dropped_h_p_from_p) // 20]}
-dropped_h_p_from_h: {list(dropped_h_p_from_h)[0 : len(dropped_h_p_from_h) : len(dropped_h_p_from_h) // 20]}
+H/GV difference in H: {list(dropped_h_gv_from_h)[1 :: len(dropped_h_gv_from_h) // 25]}
+
+———
+
+H/P difference in P: {list(dropped_h_p_from_p)[1 :: len(dropped_h_p_from_p) // 25]}
+
+H/P difference in H: {list(dropped_h_p_from_h)[1 :: len(dropped_h_p_from_h) // 25]}
 
 === Raw data ===
 
@@ -184,9 +188,9 @@ dropped_h_p_from_h: {list(dropped_h_p_from_h)[0 : len(dropped_h_p_from_h) : len(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Join multiple datasets")
     parser.add_argument("--monthly", help="Compile the data with a monthly resolution",
-                    action="store_true")
+                        action="store_true")
     parser.add_argument("--yearly", help="Compile the data with a yearly resoultion",
-                    action="store_true")
+                        action="store_true")
     args = parser.parse_args()
 
     # paths to data
@@ -207,7 +211,7 @@ if __name__ == "__main__":
     gun_violence = load_gun_violence(gun_violence_path)
 
     # David's Analysis
-    # analyze_david(housing, population, gun_violence)
+    analyze_david(housing, population, gun_violence)
 
     # joining housing and gv on ["State", "City", "Month", "Year"] resulting in table ["State", "City", "Year", "Month", "HousingPrice", "Killed", "Injured"]
     housing_gv_joined = housing.merge(gun_violence, left_on=["State", "City", "Month", "Year"], right_on=[
@@ -227,10 +231,13 @@ if __name__ == "__main__":
     condensed_dataset = pd.DataFrame()
 
     # compute the columns that are sums
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on, as_index=False)["Killed", "Injured"].sum()
+    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)[
+        "Killed", "Injured"].sum()
     # compute the columns that are means
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on, as_index=False)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea", "PopDensity", "HouseDensity", "HousingPrice"].mean()
-    condensed_dataset_avgs.rename(columns = {"Killed":"AvgKilled", "Injured":"AvgInjured"}, inplace=True)
+    condensed_dataset_avgs = housing_gv_population_joined.groupby(
+        group_on)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea"].mean()
+    condensed_dataset_avgs.rename(
+        columns={"Killed": "AvgKilled", "Injured": "AvgInjured"}, inplace=True)
     # join sums an dmeans
     condensed_data = condensed_dataset_sums.merge(condensed_dataset_avgs, on=group_on, how="inner")
     condensed_data.reset_index()
