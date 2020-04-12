@@ -75,6 +75,7 @@ def clean_gv_city(s: str) -> str:
 
     
     city = strip_special(s)
+    out = city
     redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
         'chevak', 'brattleboroguilford', 'hopevalley', 'mckeesportportvue',
         'saintmarysstmarys', 'greenvilleadamsville', 'alpharettajohnscreek',
@@ -82,10 +83,23 @@ def clean_gv_city(s: str) -> str:
         'mountjulietmtjuliet', 'birminghamensley', 'zunizunipueblo', 'portercorners',
         'sixmilerun', 'lakewoodjointbaselewismcchord']
 
-    neighborhood_match = re.compile('^([\w\s\.]+) (\([\w\s\.]+\))$').match(s)
-    if neighborhood_match and city in redlist:
-        city, county = neighborhood_match.groups()
-        print(city, county)
+    neighborhood_match = re.compile('^([\w\s\.]+) \(([\w\s\.]+)\)$').match(s)
+    if city in redlist:
+        print(f'original string: {s}')
+        if neighborhood_match:
+            left, right = neighborhood_match.groups()
+            print(f'left: "{left}", right: "{right}"')
+
+            # Usually, LEFT is the city name, and RIGHT is the inner neighborhood.
+            # There are some explicit exceptions that will be recognized here:
+            especial_cities = ["Manchester"]
+            if right in especial_cities:
+                out = strip_special(right)
+            else:
+                out = strip_special(left)
+        print(f'out: "{out}"')
+        print('—————')
+
 
     # city = strip_special(s)
     # redlist = ['orchardpark', 'louisvillesaintmatthews', 'minneapolisedina',
@@ -97,7 +111,7 @@ def clean_gv_city(s: str) -> str:
     # if city in redlist:
     #     print(s, city)
 
-    return city
+    return out
 
 def standardized_state(s: str) -> str:
     '''

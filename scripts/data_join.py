@@ -173,10 +173,6 @@ if __name__ == "__main__":
     elif yearly and not monthly:
         group_on.append("Month")
 
-    condensed_dataset = pd.DataFrame()
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"]
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Population", "Houses", "TotalArea", "LandArea"]
-    condensed_datset_counts = housing_gv_population_joined.loc(housing_gv_population_joined["killed"] != ).grouby(group_on)[""]
 
 
     
