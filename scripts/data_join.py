@@ -148,11 +148,15 @@ dropped_h_p_from_h: {len(dropped_h_p_from_h)}
 
 === Samples: Set Differences ===
 
-dropped_h_gv_from_gv: {list(dropped_h_gv_from_gv)[0 : len(dropped_h_gv_from_gv) : len(dropped_h_gv_from_gv) // 20]}
-dropped_h_gv_from_h: {list(dropped_h_gv_from_h)[0 : len(dropped_h_gv_from_h) : len(dropped_h_gv_from_h) // 20]}
+H/GV difference in GV: {list(dropped_h_gv_from_gv)[1 :: len(dropped_h_gv_from_gv) // 25]}
 
-dropped_h_p_from_p: {list(dropped_h_p_from_p)[0 : len(dropped_h_p_from_p) : len(dropped_h_p_from_p) // 20]}
-dropped_h_p_from_h: {list(dropped_h_p_from_h)[0 : len(dropped_h_p_from_h) : len(dropped_h_p_from_h) // 20]}
+H/GV difference in H: {list(dropped_h_gv_from_h)[1 :: len(dropped_h_gv_from_h) // 25]}
+
+———
+
+H/P difference in P: {list(dropped_h_p_from_p)[1 :: len(dropped_h_p_from_p) // 25]}
+
+H/P difference in H: {list(dropped_h_p_from_h)[1 :: len(dropped_h_p_from_h) // 25]}
 
 === Raw data ===
 

@@ -17,11 +17,15 @@ dropped_h_p_from_h: 4782
 
 === Samples: Set Differences ===
 
-dropped_h_gv_from_gv: ['GZCOUNTYDATA', 'bayviewgardens', 'cade', 'clearwaterbeach', 'daytona', 'eastwareham', 'fortdrum', 'gwynnoak', 'huntingtonstation', 'koreatown', 'littleeggharbor', 'mayport', 'natalbany', 'noxen', 'piercy', 'redlake', 'shaktoolik', 'stevens', 'trabucocanyon', 'webstersprings', 'wysox']
-dropped_h_gv_from_h: ['aaronsburg', 'beechercity', 'brooten', 'clamgulch', 'deerfieldtownship', 'elmaton', 'galva', 'happy', 'islesboro', 'laportecity', 'majestic', 'monmouthbeach', 'northlilbourn', 'pennock', 'reidville', 'schaller', 'springerton', 'tontogany', 'townofwesterlo', 'waverlyhall', 'zoar']
+dropped_h_gv_from_gv: ['adger', 'barto', 'bowmansville', 'carrick', 'colfaxtownship', 'dekalbjunction', 'eastover', 'fannettsburg', 'gambell', 'harlowe', 'hyannis', 'kidron', 'laughlintown', 'lulu', 'miamitownship', 'natronaheights', 'northshore', 'panther', 'poundridge', 'roe', 'sheridanlake', 'springrun', 'tasley', 'varina', 'westmarlborough', 'ypsilantitownship']
 
-dropped_h_p_from_p: ['aaronsburgcdpcentrecounty', 'barronettcdp', 'bremercountypart', 'chamizalcdp', 'crowncdp', 'eastrutherfordcdp', 'forkedrivercdp', 'greenmeadowscdp', 'hoople', 'klebergcountypart', 'lincolncenter', 'maytowncdp', 'murrayhill', 'odelltownship', 'pineygreencdp', 'richmondville', 'selzcdp', 'sterrettcdp', 'travisranchcdp', 'weidmancdp', 'ziebachcountypart']
-dropped_h_p_from_h: ['aaronsburg', 'bellcanyon', 'burkett', 'coffeecreek', 'donie', 'fanrock', 'glynn', 'hillister', 'kihei', 'llanogrande', 'merlin', 'newmanlake', 'pathfork', 'rainbow', 'saintjames', 'skippers', 'terrabella', 'townofgermantown', 'townofspencer', 'wainscott', 'zuehl']
+dropped_h_gv_from_h: ['abbot', 'barkriver', 'borregosprings', 'cantuacreek', 'cokedale', 'deergrove', 'echola', 'florencetownship', 'goldcreek', 'heartwell', 'ismay', 'lakeheritage', 'longville', 'mccoy', 'mountblanchard', 'northlima', 'parkforestvillage', 'prentice', 'rollingwood', 'sewickleyhills', 'springerville', 'thornhill', 'townofmartinsburg', 'uppertyronetownship', 'westdeptfordtownship', 'zoe']
+
+———
+
+dropped_h_p_from_p: ['aaronsburgcdpwashingtoncounty', 'autaugacountypart', 'blacklickcdp', 'caadadelosalamoscdp', 'chilgrentownship', 'crownpointcdp', 'eastbaytownship', 'fairleacdp', 'gardencityparkcdp', 'hainesburgcdp', 'hoovencdp', 'kentacrescdp', 'laplattecdp', 'lubeccdp', 'melstone', 'murry', 'northwestkoochichingut', 'pavilion', 'poysippicdp', 'rockyfordcdp', 'senecacdp', 'springridgecdp', 'taylorsislandcdp', 'valricocdp', 'westmarshland', 'zippeltownship']
+
+dropped_h_p_from_h: ['abell', 'barkriver', 'bracey', 'castlehayne', 'copakelake', 'donie', 'ermine', 'galescreek', 'gulfhammock', 'hornitos', 'keys', 'leopolis', 'marshallton', 'montgomerycreek', 'northescobares', 'paskenta', 'powellspoint', 'rollingprairie', 'sanquentin', 'southamana', 'tennesseecolony', 'townofdelhi', 'townofolean', 'trowbridgepark', 'weems', 'zephyrcove']
 
 === Raw data ===
 
