@@ -20,15 +20,15 @@ def load_housing(path):
 
     # Clean data into new_rows
     new_rows = []
-    for i, j in housing.iterrows():
+    for i, col in housing.iterrows():
         city = ""
         state = ""
         # Iterate over each column in each row
-        for y, x in enumerate(j):
+        for y, x in enumerate(col):
             # The second column ('RegionName') contains the city name
             if y == 1:
                 # lowercase the city name and make it a-z chars
-                city = cleaning.strip_special(x)
+                city = cleaning.clean_housing_region(x, col)
             if y == 2:
                 state = cleaning.standardized_state(x)
             # After column six we get into the monthly price data (starting with 1996-04)
@@ -106,7 +106,6 @@ def load_gun_violence(path):
     # reorder cols
     cols = ["State", "City", "Year", "Month", "Killed", "Injured"]
     data = data[cols]
-
 
     return data
 
@@ -186,9 +185,9 @@ H/P difference in H: {list(dropped_h_p_from_h)[1 :: len(dropped_h_p_from_h) // 2
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Join multiple datasets")
     parser.add_argument("--monthly", help="Compile the data with a monthly resolution",
-                    action="store_true")
+                        action="store_true")
     parser.add_argument("--yearly", help="Compile the data with a yearly resoultion",
-                    action="store_true")
+                        action="store_true")
 
     # paths to data
     housing_path = "../data/housing_city_monthly.csv"
@@ -201,7 +200,7 @@ if __name__ == "__main__":
     gun_violence = load_gun_violence(gun_violence_path)
 
     # David's Analysis
-    # analyze_david(housing, population, gun_violence)
+    analyze_david(housing, population, gun_violence)
 
     # joining housing and gv on ["State", "City", "Month", "Year"] resulting in table ["State", "City", "Year", "Month", "HousingPrice", "Killed", "Injured"]
     housing_gv_joined = housing.merge(gun_violence, left_on=["State", "City", "Month", "Year"], right_on=[
@@ -224,15 +223,18 @@ if __name__ == "__main__":
     condensed_dataset = pd.DataFrame()
 
     # compute the columns that are sums
-    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)["Killed", "Injured"].sum()
+    condensed_dataset_sums = housing_gv_population_joined.groupby(group_on)[
+        "Killed", "Injured"].sum()
     # compute the columns that are means
-    condensed_dataset_avgs = housing_gv_population_joined.groupby(group_on)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea"].mean()
-    condensed_dataset_avgs.rename(columns = {"Killed":"AvgKilled", "Injured":"AvgInjured"}, inplace=True)
+    condensed_dataset_avgs = housing_gv_population_joined.groupby(
+        group_on)["Killed", "Injured", "Population", "Houses", "TotalArea", "LandArea"].mean()
+    condensed_dataset_avgs.rename(
+        columns={"Killed": "AvgKilled", "Injured": "AvgInjured"}, inplace=True)
     # join sums an dmeans
     condensed_data = condensed_dataset_sums.merge(condensed_dataset_avgs, on=group_on, how="inner")
     # compute the columns that are counts
     condensed_dataset_counts = housing_gv_population_joined.groupby(group_on)["Killed"].count()
-    condensed_dataset_counts.rename(columns = {"Killed":"NumIncidents"}, inplace=True)
+    condensed_dataset_counts.rename(columns={"Killed": "NumIncidents"}, inplace=True)
     # join sums, means, counts
     final_data = condensed_data.merge(condensed_dataset_counts, on=group_on, how="inner")
     print(final_data.head(20))

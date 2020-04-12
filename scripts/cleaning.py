@@ -17,6 +17,23 @@ def strip_special(s: str) -> str:
     return str(stripped)
 
 # ———————————————————————————————————
+# Housing Dataset
+
+
+def clean_housing_region(s: str, col) -> str:
+    '''
+    Used to clean the RegionName into a usable city name.
+    '''
+    out = strip_special(s)
+
+    # Format 'Town of' instances
+    whitelist = ['townofpines']
+    if out.startswith('townof') and out not in whitelist:
+        out = out[6:]
+
+    return out
+
+# ———————————————————————————————————
 # Population Dataset
 
 
@@ -35,18 +52,21 @@ def clean_pop_city_county(s):
     city = strip_special(city)
 
     # If the suffix is one of these place designations, remove it.
-    place_designations_crop = ['cdp', 'county', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
+    place_designations_crop = ['cdp', 'government', 'village', 'urbana', 'gore', 'corporation', 'town',
                                'plantation', 'city', 'grant', 'location', 'borough', 'comunidad', 'purchase', 'municipality']
-    # place_designations_keep = ['township']
 
-    if suffix is 'county':
-        return 'POPCOUNTYDATA'
+    out = city
+    if suffix is 'county' or suffix is 'countypart':
+        out = 'POPCOUNTYDATA'
     elif suffix in place_designations_crop:
-        return city[:-len(suffix)]
-    else:
-        # in this case it is probably a county name
-        # so there's nothing we can do about it
-        return city
+        out = city[:-len(suffix)]
+
+    if out == 'autaugacountypart':
+        print(s)
+        print(city)
+        print(suffix)
+
+    return out
 
 
 def clean_pop_int(i):
