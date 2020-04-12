@@ -85,7 +85,7 @@ def clean_gv_city(s: str) -> str:
 
     city = strip_special(s)
     out = city
-    redlist = ['plaintownship', 'argentinetownship', 'statenisland', 'rainiervalley', 'thornebay', 'kendallpark', 'larimer', 'pottsgrove', 'newcaney',
+    redlist = ['plaintownship', 'argentinetownship', 'statenisland', 'sunsetharbor', 'thornebay', 'kendallpark', 'larimer', 'pottsgrove', 'newcaney',
                'orangemound', 'searingtown', 'baypoint', 'jamescity', 'virgie', 'eastamherst', 'canandaigua', 'sandoval', 'meally', 'daltontownship', 'hamptonbeach']
 
     neighborhood_match = re.compile(r'^([\w\s\.]+) \(([\w\s\.]+)\)$').match(s)
@@ -101,9 +101,16 @@ def clean_gv_city(s: str) -> str:
         else:
             out = strip_special(left)
 
+    # Certain values will be manually overwritten (boroughs -> cities, etc.)
+    exception_dict = {
+        'statenisland': 'newyorkcity'
+    }
+    if out in exception_dict.keys():
+        out = exception_dict[out]
+
     # if out in redlist:
-        # print('REDLIST')
-        # print(f'{s} | {out} | {bool(neighborhood_match)}')
+    #     print('REDLIST')
+    #     print(f'{s} | {out} | {bool(neighborhood_match)}')
 
         # if city in redlist:
         #     print(f'original string: {s}')
@@ -192,7 +199,7 @@ def standardized_state(s: str) -> str:
         "wisconsin": "wi",
         "wyoming": "wy",
         "puertorico": "pr",
-        "districtofcolumbia": "dc"
+        "districtofcolumbia": "dc",
     }
     if len(s) == 2:
         return s
