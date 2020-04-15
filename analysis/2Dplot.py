@@ -56,34 +56,29 @@ def visualize_pts(data, feature_columns=["","",""]):
     :return:
     """
     
-    x, y, z = np.hsplit(data, 3)
+    x, y = np.hsplit(data, 2)
     
 
     # create a new figure
-    ax = plt.figure().add_subplot(111, projection='3d')
+    fig, ax = plt.subplots()
     
     # color the points based on the first feature
     colors_s = None
 
     #colors_s = [cmap(l / MAX_CLUSTERS) for i in x ]
 
-    
-
-    ax.scatter(x, y, z, c=colors_s)
+    ax.scatter(x, y, c=colors_s)
     
     ax.set_xlabel(feature_columns[0])
     ax.set_ylabel(feature_columns[1])
-    ax.set_zlabel(feature_columns[2])
+    ax.grid(True)
 
-    plot_name = "/3DScatter" + "_" + feature_columns[0] + "_" + feature_columns[1] + "_" + feature_columns[2]
-
-    # Helps visualize clusters
-    plt.gca().invert_xaxis()
+    plot_name = "/2DScatter" + "_" + feature_columns[0] + "_" + feature_columns[1] 
 
     # add title
-    plt.title(feature_columns[0] + " vs " + feature_columns[1] + " vs " + feature_columns[2])
-    
-    plt.savefig("output/3DScatter" + plot_name + ".png")
+    plt.title(feature_columns[0] + " vs " + feature_columns[1] )
+    plt.ylim(bottom=0, top=0.0125)
+    plt.savefig("output/2DScatter" + plot_name + ".png")
     plt.show()
 
 
@@ -108,6 +103,6 @@ if __name__ == '__main__':
     raw_data['WaterPercent'] = raw_data['TotalArea'] - raw_data['LandArea'] / raw_data['TotalArea']
     
 
-    feature_columns = ['HousingPrice over PopulationDensity', "PopDensity", "GVRate"]
+    feature_columns = ['PopDensity', "GVRate"]
     data = read_data(raw_data, feature_columns)
     visualize_pts(data, feature_columns=feature_columns)
