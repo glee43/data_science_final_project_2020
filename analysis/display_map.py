@@ -115,9 +115,7 @@ def visualize_pts(data, feature_columns=["",""]):
     :param centroid_indices: 1D numpy array of centroid indices for each data point in data
     :return:
     """
-    
-    # x, y = np.hsplit(data, 2)
-    
+        
     x = data[feature_columns[0]]
     y = data[feature_columns[1]]
 
@@ -126,11 +124,11 @@ def visualize_pts(data, feature_columns=["",""]):
         z=y, # Data to be color-coded
         locationmode = 'USA-states', # set of locations match entries in `locations`
         colorscale = 'Reds',
-        colorbar_title = feature_columns[1],
+        colorbar_title = "Avg " + feature_columns[1],
     ))
 
     fig.update_layout(
-        title_text = feature_columns[1],
+        title_text = "Avg " + feature_columns[1] + " (2013 - 2018)",
         geo_scope='usa', # limite map scope to USA
     )
 
@@ -153,12 +151,13 @@ if __name__ == '__main__':
     data.loc[:, "State"] = data.loc[:, "State"].apply(standardized_state)
 
     # aggragate data by state "Killed",  "Injured", "Population", "NumIncidents"
-    raw_data = data.groupby('State')["Killed",  "Injured", "Population", "NumIncidents"].sum()
+    raw_data = data.groupby('State')["Killed",  "Injured", "Population", "NumIncidents", "TotalArea", "LandArea"].sum()
     raw_data['HousingPrice'] = data.groupby('State')["HousingPrice"].mean()
     raw_data['State'] = data.groupby('State').groups.keys()
     
     # add extra fields 
-    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
+    raw_data['PopDensity'] = raw_data['Population'] / raw_data['TotalArea']
+    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['PopDensity']
     
    
     feature_columns = ["State","HousingPrice"]
