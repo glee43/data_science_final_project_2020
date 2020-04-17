@@ -21,41 +21,132 @@
 
 <article class="wrapper">
   <header>
-    <h1 class="pageTitle">Task & Algorithm</h1>
+    <h1 class="pageTitle">Overview</h1>
     <!-- <h2 class="pageSubTitle">lee-lee-ho-ho</h2> -->
   </header>
   <section>
-    <p>A defined hypothesis or prediction task, with clearly stated metrics for success.
-    Why did you use this statistical test or ML algorithm? Which other tests did you consider or evaluate? How did you measure success or failure? Why that metric/value? What challenges did you face evaluating the model? Did you have to clean or restructure your data? </p>
+    <p>Our goal is to predict housing and population vs. rate of gun violence using multiple regression. We used utilizing multiple regressionand/or a t-test between the rate of gunviolence and high vs. low housing prices. The specific attributes of the data we are looking at are the population, housing price, rate, location (city/county), time (year). To visualize our results, we implemented multiple 2D scatterplots, bar graphs, and a map display. </p>
 
-    <p>Our goal is to predict housing and population vs. rate of gun violence using multiple regression. We will be utilizing k-means clustering and/or a t-test between the rate of gunviolence and high vs. low housing prices. The specific attributes of the data we are looking at are the population, housing price, rate, location (city/county), time (year). </p>
+    <p>
+      <b style="font-size: 20px;">Hypothesis</b><br> There is a statistical difference between Gun Violence rate (Number of Incidents/ Population) and the average housing price in an area (as an indication of wealth). <br><br>
+      <b style="font-size: 20px;">Our Five Analysis Aspects</b> <br>
+      1. Housing and Population vs Rate of Gun Violence - linear regression <br>
+      2. T-test on rates of gun violence split among different high vs low housing prices <br>
+      3. 3 axis scatter plots of: <br>
+      &emsp;&emsp;&emsp;Housing Price vs Population vs GVRate <br>
+      4. 2 axis scatter plots of: <br>
+      &emsp;&emsp;&emsp;Housing vs GV Rate <br>
+      &emsp;&emsp;&emsp;PopDensity vs GV Rate <br>
+      &emsp;&emsp;&emsp;Population vs GV Rate <br>
+      5. Display data on a US Map <br>
+      &emsp;&emsp;&emsp;GVRate <br>
+      &emsp;&emsp;&emsp;Housing Price <br>
+      &emsp;&emsp;&emsp;Injured <br>
+      &emsp;&emsp;&emsp;Killed <br>
+      &emsp;&emsp;&emsp;NumInccidents <br>
+      &emsp;&emsp;&emsp;PopDensity <br>
+      &emsp;&emsp;&emsp;Population <br>
+      6. Bar graphs? 
+    </p>
+
+    <p>
+      For our full results and graphs, please refer to the outputs of the github under analysis/output, add the graphs there or run the corresponding scripts to get more graphs. You can also take a look at kmeans; it essentially separates the data a little lol and adds some nice colors. :) <br>
+      &emsp;&emsp;&emsp;2DScatter - contains the 2DScatter plots <br>
+      &emsp;&emsp;&emsp;3DScatter - contains the 3DScatter plots <br>
+      &emsp;&emsp;&emsp;kmeans - not using but worth adding for questions? <br>
+      &emsp;&emsp;&emsp;maps - contains the maps
+    </p>
 
   </section>
 </article>
 
 <article class="wrapper">
   <header>
-    <h1 class="pageTitle">Interpretation</h1>
+    <h1 class="pageTitle">Multiple Regression</h1>
     <!-- <h2 class="pageSubTitle">lee-lee-ho-ho</h2> -->
   </header>
   <section>
-    <p>What is your interpretation of the results? Do accept or deny the hypothesis, or are you satisfied with your prediction accuracy? For prediction projects, we expect you to argue why you got the accuracy/success metric you have. Intuitively, how do you react to the results? Are you confident in the results? </p>
+    <p>After analyzing the trends between gun violence, population, and housing prices, it made the most sense to use a multiple linear regression model to predict rates of gun violence based on housing prices and population. This model would both predict future trends of gun violence and also verify the strength of our chosen dependent variables as predictors. </p>
+
+    <p>Our data did not have protected attributes that could have affected our model. A protected attribute, under federal law, is legally protected from discrimination to prevent adverse action. This includes protected attributes such as race, gender, age, religion, sexual orientation, and socioeconomic status. While housing prices and population are potentially correlated with many protected attributes, neither contain any of these attributes.</p> 
 
   </section>
 </article>
 
 <article class="wrapper">
   <header>
-    <h1 class="pageTitle">Visualization</h1>
+    <h1 class="pageTitle">T-Test</h1>
     <!-- <h2 class="pageSubTitle"></h2> -->
   </header>
   <section>
-    <p>(Full results + graphs (at least 1 stats/ml test (above) and at least 1 visualization). Depending on your model/test/project we would ideally like you to show us your full process so we can evaluate how you conducted the test!)</p>
+    <p>Some potential confounding variables we noticed were crime rates, gun availability, number of licenses, unemployment, age, gender, education, drug use, urbanization, ethnicity, strength of gun laws, family size, personality/behavior. Although numerous studies have shown these variables are implicitly correlated with socioeconomic status and therefore housing prices, we did not specifically take these into account when making predictions. 
+    </p>
+  </section>
+</article>
 
-    <p>For your visualization, why did you pick this graph? What alternative ways might you communicate the result? Where there any challenges visualizing the results, if so, then what where they? Will your visualization require text to provide context or is it standalone (either is fine, but it's recognize which type your visualization is)?</p>
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Visualizations</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p><b style="font-size: 20px;">3 Axis Scatter Plot</b> <br>
+      <b>•</b> Why <br>
+      Since we have so many data points, it would be interesting to use a scatter plot to display all of the data. We wanted to find trends or pattern in the data so a scatter plot seemed a good choice.
+      Furthermore, a 3 axis vs a 2 axis scatter plot allows for us to examine multiple attributes of the data within one graph to examine if there are multiple trends at play.<br><br>
+      <b>•</b> Alternatives<br>
+      We could try to segment the data more, maybe having the data split by states or some additional factors and if we want them all to be in the same graph, we can color code the points. <br><br>
+      <b>•</b> Challenges<br>
+      Since there were a few outliers, we chose to just display points within 3 stddev from the center so we don’t end up with a large graph where the majority of the points were in one corner 
+      There are also a lot of data points so maybe we should consider grouping the data somehow and maybe aggregating the points in some way<br><br>
+      <b>•</b> Additional Explanation<br>
+      The labels and titles should be fairly self-explanatory.<br><br>
+    </p>
 
-    <p>If you did a statistics test, are there any confounding trends or variables you might be observing?
-    If you did a machine learning model, why did you choose this machine learning technique? Does your data have any sensitive/protected attributes that could affect your machine learning model?</p>
+    <p><b style="font-size: 20px;">2 Axis Scatter Plot</b> <br>
+      <b>•</b> Why<br>
+      Since we have so many data points, it would be interesting to use a scatter plot to display all of the data	
+      We wanted to find trends or pattern in the data so a scatter plot seems a good choice. With only two axis, we can focus on the trends we want to examine and not have so many data points floating around. <br><br>
+      <b>•</b> Alternatives <br>
+      We could try to segment the data more, maybe having the data split by states or some additional factors and if we want them all to be in the same graph, we can color code the points. Similar to the 3 axis plot. <br><br>
+      <b>•</b> Challenges <br>
+      Since there were a few outliers, we chose to just display points within 3 stddev from the center so we don’t end up with a large graph where the majority of the points were in one corner. <br><br>
+      <b>•</b> Additional Explanation <br>
+      The labels and titles should be fairly self-explanatory <br>
+    </p>
+
+    <p> <b style="font-size: 20px;">Display Data Hotspots on a US Map</b><br>
+      <b>•</b> Why<br>
+      The map allows us to easily look at trends in the data split among states and provides an informative graphic for each data point based on the US. <br><br>
+      <b>•</b> Alternatives <br>
+      We could also use a bar graph for similar results. <br><br>
+      <b>•</b> Challenges <br>
+      We completed additional data processing to aggregate the data from cities/counties and individual incidents to states. <br><br>
+      <b>•</b> Additional Explanation <br>
+      The labels and titles should be fairly self-explanatory. <br>
+    </p>
+
+    <p> <b style="font-size: 20px;">Bar Graphs</b><br>
+      <b>•</b> Why<br>
+      sdf <br><br>
+      <b>•</b> Alternatives <br>
+      sdf <br><br>
+      <b>•</b> Challenges <br>
+      sdf <br><br>
+      <b>•</b> Additional Explanation <br>
+      The labels and titles should be fairly self-explanatory. <br>
+    </p>
+
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Conclusion & Ethical Considerations</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p> Throughout the final project process, you will be expected to think critically and write about where your data is coming from, how you're analyzing and visualizing your data, and potential positive or negative consequences of your results.</p>
   </section>
 </article>
 
