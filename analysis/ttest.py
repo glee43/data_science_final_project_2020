@@ -34,7 +34,7 @@ def perform_t_test(a: pd.Series, b: pd.Series, significance_level: float = 0.05)
     upper_crit_val = stats.t.ppf(1 - significance_level / 2, degrees_of_freedom)
 
     print(
-        f"test_statistic={test_statistic:.5f}, lower_critical_value={lower_crit_val:.5f}, upper_critical_value={upper_crit_val:.5f}")
+        f"test_statistic={test_statistic:.5f}. critical values: {lower_crit_val:.5f} and {upper_crit_val:.5f}")
     if lower_crit_val <= test_statistic <= upper_crit_val:
         print("We therefore fail to reject the null hypothesis and cannot accept the alternate hypothesis.")
     else:
@@ -52,9 +52,14 @@ if __name__ == '__main__':
     # 2. Preprocess
     raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
 
-    # 3. Partition into two categories: HousingPrice, with a separator at price of $300k
+    # 3. Partition into two categories:
+    # (a) HousingPrice, separated on a price of $300k
     housing_300k_under = raw_data[raw_data['HousingPrice'] <= 300_000].dropna()['GVRate']
     housing_300k_over = raw_data[raw_data['HousingPrice'] > 300_000].dropna()['GVRate']
+
+    # (b) PopDensity, separated on 3,000 people per sq mile
+    pop_density_3k_under = raw_data[raw_data['PopDensity'] <= 3_000].dropna()['GVRate']
+    pop_density_3k_over = raw_data[raw_data['PopDensity'] > 3_000].dropna()['GVRate']
 
     # 4. Z-Test
     # TODO
@@ -62,5 +67,5 @@ if __name__ == '__main__':
     perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
 
     print()
-    print('Population Density (over __ vs under __):')
-    # perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
+    print('Population Density (over 3k people/sq mi vs under 3k people/sq mi):')
+    perform_t_test(a=pop_density_3k_under, b=pop_density_3k_over, significance_level=0.05)
