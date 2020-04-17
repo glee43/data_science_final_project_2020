@@ -6,6 +6,43 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 
+
+def perform_t_test(a: pd.Series, b: pd.Series, significance_level: float = 0.05) -> None:
+    '''
+    Performs a one-tailed two-sample T-test.
+    :param a: The first sample.
+    :param b: The second sample.
+    :param significance_level: The threshold for the p-value at which we reject the null hypothesis
+    :prints: Whether or not the null hypothesis (there is no statistical difference in the values
+    between the two samples) can be rejected for the alternate hypothesis (there is a statistical
+    difference in the values between the two samples.)
+    '''
+
+    def calc_degrees_of_freedom(a, b):
+        s_1 = np.var(a)
+        s_2 = np.var(b)
+        n_1 = np.shape(a)[0]
+        n_2 = np.shape(b)[0]
+
+        nr = ((s_1/n_1) + (s_2/n_2))**2
+        dr = (((s_1/n_1)**2)/(n_1 - 1)) + (((s_2/n_2)**2)/(n_2 - 1))
+        return nr / dr
+
+    test_statistic, p_value = stats.ttest_ind(a=a, b=b, equal_var=False)
+    degrees_of_freedom = calc_degrees_of_freedom(a=a, b=b)
+    lower_crit_val = stats.t.ppf(significance_level / 2, degrees_of_freedom)
+    upper_crit_val = stats.t.ppf(1 - significance_level / 2, degrees_of_freedom)
+
+    print(
+        f"test_statistic={test_statistic:.5f}, lower_critical_value={lower_crit_val:.5f}, upper_critical_value={upper_crit_val:.5f}")
+    if lower_crit_val <= test_statistic <= upper_crit_val:
+        print("We therefore fail to reject the null hypothesis and cannot accept the alternate hypothesis.")
+    else:
+        print("We therefore reject the null hypothesis and accept the alternate hypothesis.")
+
+    return None
+
+
 if __name__ == '__main__':
     # 1. Load data for which each row is a city
     datapath = '../data/joined_agg.csv'
@@ -21,32 +58,9 @@ if __name__ == '__main__':
 
     # 4. Z-Test
     # TODO
+    print('Housing Price (over $300k v.s. under $300k):')
+    perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
 
-    def calc_degrees_of_freedom(a, b):
-        s_1 = np.var(a)
-        s_2 = np.var(b)
-        n_1 = np.shape(a)[0]
-        n_2 = np.shape(b)[0]
-
-        nr = ((s_1/n_1) + (s_2/n_2))**2
-        dr = (((s_1/n_1)**2)/(n_1 - 1)) + (((s_2/n_2)**2)/(n_2 - 1))
-        return nr / dr
-
-    def reject_or_not(test_statistic, lower_crit_val, upper_crit_val):
-        print(
-            f"test_statistic={test_statistic:.5f}, lower_critical_value={lower_crit_val:.5f}, upper_critical_value={upper_crit_val:.5f}")
-        if lower_crit_val <= test_statistic <= upper_crit_val:
-            print("We therefore fail to reject the null hypothesis and cannot accept the alternate hypothesis.")
-        else:
-            print("We therefore reject the null hypothesis and accept the alternate hypothesis.")
-
-    degrees_of_freedom = calc_degrees_of_freedom(a=housing_300k_under, b=housing_300k_over)
-
-    test_statistic, p_value = stats.ttest_ind(
-        a=housing_300k_under, b=housing_300k_over, equal_var=False)
-    print({'test_statistic': test_statistic, 'p_value': p_value})
-
-    lower_crit_val, upper_crit_val = stats.t.ppf(
-        0.025, degrees_of_freedom), stats.t.ppf(0.975, degrees_of_freedom)
-
-    reject_or_not(test_statistic, lower_crit_val, upper_crit_val)
+    print()
+    print('Population Density (over __ vs under __):')
+    # perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
