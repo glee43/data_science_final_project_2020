@@ -124,11 +124,11 @@ def visualize_pts(data, feature_columns=["",""]):
         z=y, # Data to be color-coded
         locationmode = 'USA-states', # set of locations match entries in `locations`
         colorscale = 'Reds',
-        colorbar_title = "Avg " + feature_columns[1],
+        colorbar_title = "" + feature_columns[1],
     ))
 
     fig.update_layout(
-        title_text = "Avg " + feature_columns[1] + " (2013 - 2018)",
+        title_text = "" + feature_columns[1] + " (Jan 2014 - Mar 2018)",
         geo_scope='usa', # limite map scope to USA
     )
 
@@ -157,9 +157,9 @@ if __name__ == '__main__':
     
     # add extra fields 
     raw_data['PopDensity'] = raw_data['Population'] / raw_data['TotalArea']
-    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['PopDensity']
+    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
     
    
-    feature_columns = ["State","HousingPrice"]
+    feature_columns = ["State","PopDensity"]
     data = read_data(raw_data, feature_columns)
     visualize_pts(data, feature_columns=feature_columns)

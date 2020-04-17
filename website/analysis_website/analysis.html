@@ -1,0 +1,259 @@
+  
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Analysis by lee-lee-ho-ho</title>
+  <script type="text/javascript">
+    $(window).scroll(function(e){
+      parallax();
+    });
+
+    function parallax(){
+      var scrolled = $(window).scrollTop();
+      $('.background').css('top',-(scrolled*0.15)+'px');
+    }
+  </script>
+
+</head>
+<body>
+<div class="background">
+</div>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Overview</h1>
+    <!-- <h2 class="pageSubTitle">lee-lee-ho-ho</h2> -->
+  </header>
+  <section>
+    <p>Our goal is to predict housing and population vs. rate of gun violence using multiple regression. We used utilizing multiple regressionand/or a t-test between the rate of gunviolence and high vs. low housing prices. The specific attributes of the data we are looking at are the population, housing price, rate, location (city/county), time (year). To visualize our results, we implemented multiple 2D scatterplots, bar graphs, and a map display. </p>
+
+    <p>
+      <b style="font-size: 20px;">Hypothesis</b><br> There is a statistical difference between Gun Violence rate (Number of Incidents/ Population) and the average housing price in an area (as an indication of wealth). <br><br>
+      <b style="font-size: 20px;">Our Five Analysis Aspects</b> <br>
+      1. Housing and Population vs Rate of Gun Violence - linear regression <br>
+      2. T-test on rates of gun violence split among different high vs low housing prices <br>
+      3. 3 axis scatter plots of: <br>
+      &emsp;&emsp;&emsp;Housing Price vs Population vs GVRate <br>
+      4. 2 axis scatter plots of: <br>
+      &emsp;&emsp;&emsp;Housing vs GV Rate <br>
+      &emsp;&emsp;&emsp;PopDensity vs GV Rate <br>
+      &emsp;&emsp;&emsp;Population vs GV Rate <br>
+      5. Display data on a US Map <br>
+      &emsp;&emsp;&emsp;GVRate <br>
+      &emsp;&emsp;&emsp;Housing Price <br>
+      &emsp;&emsp;&emsp;Injured <br>
+      &emsp;&emsp;&emsp;Killed <br>
+      &emsp;&emsp;&emsp;NumInccidents <br>
+      &emsp;&emsp;&emsp;PopDensity <br>
+      &emsp;&emsp;&emsp;Population <br>
+      6. Bar graphs? 
+    </p>
+
+    <p>
+      For our full results and graphs, please refer to the outputs of the github under analysis/output, add the graphs there or run the corresponding scripts to get more graphs. You can also take a look at kmeans; it essentially separates the data a little lol and adds some nice colors. :) <br>
+      &emsp;&emsp;&emsp;2DScatter - contains the 2DScatter plots <br>
+      &emsp;&emsp;&emsp;3DScatter - contains the 3DScatter plots <br>
+      &emsp;&emsp;&emsp;kmeans - not using but worth adding for questions? <br>
+      &emsp;&emsp;&emsp;maps - contains the maps
+    </p>
+
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Multiple Regression</h1>
+    <!-- <h2 class="pageSubTitle">lee-lee-ho-ho</h2> -->
+  </header>
+  <section>
+    <p>We chose to use single and multiple regression to analyze the influence of population density and housing price on gun violence rates. Linear regression is a great tool for this task because it allows us to quantify how well our independent variables can explain the variation in the dependent variable through the r-squared value, and it also gives us insight into the nature of the relationship between each independent variable and the dependent variable through the coefficients of each term in the regression.  Through regression, we are also able to see expected gun violence rates for values of the housing price and population density that weren’t in our dataset. </p>
+
+    <p>Our data did not have protected attributes that could have affected our model. A protected attribute, under federal law, is legally protected from discrimination to prevent adverse action. This includes protected attributes such as race, gender, age, religion, sexual orientation, and socioeconomic status. While housing prices and population are potentially correlated with many protected attributes, neither contain any of these attributes.</p> 
+
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">T-Test</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p>We chose to run a t-test because...</p>
+    
+    <p>Some potential confounding variables we noticed were crime rates, gun availability, number of licenses, unemployment, age, gender, education, drug use, urbanization, ethnicity, strength of gun laws, family size, personality/behavior. Although numerous studies have shown these variables are implicitly correlated with socioeconomic status and therefore housing prices, we did not specifically take these into account when making predictions. 
+    </p>
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">3 Axis Scatter Plot</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p>
+      <b>Why</b>  <br>
+      Since we have so many data points, it would be interesting to use a scatter plot to display all of the data. We wanted to find trends or pattern in the data so a scatter plot seemed a good choice.
+      Furthermore, a 3 axis vs a 2 axis scatter plot allows for us to examine multiple attributes of the data within one graph to examine if there are multiple trends at play.<br><br>
+      <b>Alternatives</b> <br>
+      We could try to segment the data more, maybe having the data split by states or some additional factors and if we want them all to be in the same graph, we can color code the points. <br><br>
+      <b>Challenges</b> <br>
+      Since there were a few outliers, we chose to just display points within 3 stddev from the center so we don’t end up with a large graph where the majority of the points were in one corner 
+      There are also a lot of data points so maybe we should consider grouping the data somehow and maybe aggregating the points in some way<br><br>
+      <b>Additional Explanation</b> <br>
+      The labels and titles should be fairly self-explanatory.
+    </p>
+    <img src="images/3DScatter/3DScatter_HousingPrice%20over%20PopulationDensity_PopDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/3DScatter/3DScatter_HousingPrice_Population_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">2 Axis Scatter Plot</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p>
+      <b>Why</b> <br>
+      Since we have so many data points, it would be interesting to use a scatter plot to display all of the data	
+      We wanted to find trends or pattern in the data so a scatter plot seems a good choice. With only two axis, we can focus on the trends we want to examine and not have so many data points floating around. <br><br>
+      <b>Alternatives</b>  <br>
+      We could try to segment the data more, maybe having the data split by states or some additional factors and if we want them all to be in the same graph, we can color code the points. Similar to the 3 axis plot. <br><br>
+      <b>Challenges</b>  <br>
+      Since there were a few outliers, we chose to just display points within 3 stddev from the center so we don’t end up with a large graph where the majority of the points were in one corner. <br><br>
+      <b>Additional Explanation</b>  <br>
+      The labels and titles should be fairly self-explanatory 
+    </p>
+    <img src="images/2DScatter/2DScatter_HousingPrice_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/2DScatter/2DScatter_HousingPrice%20over%20PopulationDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/2DScatter/2DScatter_PopDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/2DScatter/2DScatter_Population_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Display Data Hotspots on a US Map</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p> 
+      <b>Why</b> <br>
+      The map allows us to easily look at trends in the data split among states and provides an informative graphic for each data point based on the US. <br><br>
+      <b>Alternatives</b>  <br>
+      We could also use a bar graph for similar results. <br><br>
+      <b>Challenges</b>  <br>
+      We completed additional data processing to aggregate the data from cities/counties and individual incidents to states. <br><br>
+      <b>Additional Explanation</b>  <br>
+      The labels and titles should be fairly self-explanatory. <br>
+    </p>
+    <img src="images/maps/map_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_HousingPrice.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_Injured.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_Killed.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_NumIncidents.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_PopDensity.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/maps/map_Population.png" style="max-width:80%; max-height:80%; justify-content:center;">
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Bar Graphs</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p>
+      <b>Why</b> <br>
+      sdf <br><br>
+      <b>Alternatives</b>  <br>
+      sdf <br><br>
+      <b>Challenges</b>  <br>
+      sdf <br><br>
+      <b>Additional Explanation</b>  <br>
+      The labels and titles should be fairly self-explanatory. <br>
+    </p>
+  </section>
+</article>
+
+<article class="wrapper">
+  <header>
+    <h1 class="pageTitle">Conclusion & Ethical Considerations</h1>
+    <!-- <h2 class="pageSubTitle"></h2> -->
+  </header>
+  <section>
+    <p> Throughout the final project process, you will be expected to think critically and write about where your data is coming from, how you're analyzing and visualizing your data, and potential positive or negative consequences of your results.</p>
+  </section>
+</article>
+
+</body>
+</html>
+
+<style>
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900);
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400,600,700,300,200);
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1.6em;
+    font-weight: 300;
+    color: #555;
+}
+
+p {
+    margin-bottom: 2em;
+}
+
+header {
+    border-bottom: solid 1px #e0e0e0;
+    margin: 0 0 20px 0;
+}
+
+.pageTitle,
+.pageSubTitle {
+    font-family: 'Titillium', sans-serif;
+    text-transform: uppercase;
+}
+
+.pageTitle {
+    color: #FF7600;
+    font-size: 2em;
+    font-weight: 700;
+    /* line-height: 0em; */
+    line-height: 2em;
+}
+
+.pageSubTitle {
+    color: #333;
+    margin-bottom: 1em;
+    font-size: 1.4em;
+    font-weight: 300;
+}
+
+.background {
+    background: 
+        url("https://www.american.edu/programs/shared/data-science/images/datascience-og.jpg")
+        repeat;
+    background-size: 100% auto;
+    position: fixed;
+    width: 100%;
+    height: 300%;
+    top: 0;
+    left: 0;
+    z-index: -1
+}
+
+.wrapper {
+    width: 520px;
+    padding: 40px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow:  0px 3px 3px 1px rgba(0, 0, 0, 0.25);
+}
+</style>

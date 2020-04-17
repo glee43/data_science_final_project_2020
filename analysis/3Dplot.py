@@ -14,7 +14,8 @@ import math
 
 from mpl_toolkits.mplot3d import Axes3D 
 
-cmap = cm.get_cmap('tab10', 10)
+MAX_VAL = 10
+cmap = cm.get_cmap('tab10', MAX_VAL)
 
 
 def read_data(data, feature_columns):
@@ -40,7 +41,7 @@ def read_data(data, feature_columns):
     return data_subset
 
 
-def visualize_pts(data, feature_columns=["","",""]):
+def visualize_pts(data, feature_columns=["","",""], additional_data=None):
     """
     Visualizes the song data points and (optionally) the calculated k-means
     cluster centers.
@@ -65,10 +66,19 @@ def visualize_pts(data, feature_columns=["","",""]):
     # color the points based on the first feature
     colors_s = None
 
-    #colors_s = [cmap(l / MAX_CLUSTERS) for i in x ]
+    # color the points based on population
+    if(additional_data is not None):
+        colors_s = []
+        for d in additional_data:
+            if d < 10000:
+                #print("red")
+                colors_s.append(cmap(0/MAX_VAL))
+            elif d > 10000 and d < 100000:
+                colors_s.append(cmap(2/MAX_VAL))
+            else:
+                colors_s.append(cmap(3/MAX_VAL))
 
     
-
     ax.scatter(x, y, z, c=colors_s)
     
     ax.set_xlabel(feature_columns[0])
@@ -108,6 +118,13 @@ if __name__ == '__main__':
     raw_data['WaterPercent'] = raw_data['TotalArea'] - raw_data['LandArea'] / raw_data['TotalArea']
     
 
-    feature_columns = ['HousingPrice over PopulationDensity', "PopDensity", "GVRate"]
+    feature_columns = ['HousingPrice', "PopDensity", "GVRate", 'Population']
+    
     data = read_data(raw_data, feature_columns)
-    visualize_pts(data, feature_columns=feature_columns)
+
+    x, y, z, a = np.hsplit(data, 4)
+    data = np.column_stack((np.column_stack((x,y)),z))
+    additional_data = np.ndarray.flatten(a)
+    print({ 'additional data shape': additional_data.shape })
+
+    visualize_pts(data, feature_columns=feature_columns, additional_data=additional_data)
