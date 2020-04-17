@@ -71,12 +71,12 @@ def visualize_pts(data, feature_columns=["","",""], additional_data=None):
         colors_s = []
         for d in additional_data:
             if d < 10000:
-                #print("red")
-                colors_s.append(cmap(0/MAX_VAL))
+                # print(cmap(0/MAX_VAL))
+                colors_s.append(cmap(2/MAX_VAL))
             elif d > 10000 and d < 100000:
                 colors_s.append(cmap(1/MAX_VAL))
             else:
-                colors_s.append(cmap(2/MAX_VAL))
+                colors_s.append(cmap(3/MAX_VAL))
 
     
     ax.scatter(x, y, z, c=colors_s)
