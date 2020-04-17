@@ -77,7 +77,7 @@ def visualize_pts(data, feature_columns=["","",""]):
 
     # add title
     plt.title(feature_columns[0] + " vs " + feature_columns[1] )
-    plt.ylim(bottom=0, top=0.0125)
+    plt.ylim(bottom=0, top=0.003)
     plt.savefig("output/2DScatter" + plot_name + ".png")
     plt.show()
 
@@ -98,11 +98,11 @@ if __name__ == '__main__':
     # raw_data = raw_data.loc[raw_data['NumIncidents']>10]
 
     # add extra fields 
-    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
+    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population'] / 4.25
     raw_data['HousingPrice over PopulationDensity'] = raw_data['HousingPrice'] / raw_data['PopDensity']
     raw_data['WaterPercent'] = raw_data['TotalArea'] - raw_data['LandArea'] / raw_data['TotalArea']
     
 
-    feature_columns = ['PopDensity', "GVRate"]
+    feature_columns = ['Population', "GVRate"]
     data = read_data(raw_data, feature_columns)
     visualize_pts(data, feature_columns=feature_columns)

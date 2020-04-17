@@ -29,14 +29,17 @@
     <p>Our goal is to predict housing and population vs. rate of gun violence using multiple regression. We used utilizing multiple regressionand/or a t-test between the rate of gunviolence and high vs. low housing prices. The specific attributes of the data we are looking at are the population, housing price, rate, location (city/county), time (year). To visualize our results, we implemented multiple 2D scatterplots, bar graphs, and a map display. </p>
 
     <p>
-      <b style="font-size: 20px;">Hypothesis</b><br> There is a statistical difference between Gun Violence rate (Number of Incidents/ Population) and the average housing price in an area (as an indication of wealth). <br><br>
+      <b style="font-size: 20px;">Hypothesis</b><br> There is a statistical difference between gun violence rate (number of gun violence incidents per capita) between areas with expensive housing and areas with inexpensive housing. Specifically, we expect areas with expensive housing to have lower rates of gun violence. We also hypothesize gun violence rate will increase with population density.
+      <br><br>
       <b style="font-size: 20px;">Our Five Analysis Aspects</b> <br>
+      * for reference, our data span from Jan 2014 to March 2018, GVRate = num_incidents/person/year, HomocideRate/Deadliness = num_killed/person
+      <br>
       1. Housing and Population vs Rate of Gun Violence - linear regression <br>
       2. T-test on rates of gun violence split among different high vs low housing prices <br>
       3. 3 axis scatter plots of: <br>
-      &emsp;&emsp;&emsp;Housing Price vs Population vs GVRate <br>
+      &emsp;&emsp;&emsp;Housing Price vs PopDensity vs GVRate <br>
       4. 2 axis scatter plots of: <br>
-      &emsp;&emsp;&emsp;Housing vs GV Rate <br>
+      &emsp;&emsp;&emsp;HousingPrice vs GV Rate <br>
       &emsp;&emsp;&emsp;PopDensity vs GV Rate <br>
       &emsp;&emsp;&emsp;Population vs GV Rate <br>
       5. Display data on a US Map <br>
@@ -47,15 +50,14 @@
       &emsp;&emsp;&emsp;NumInccidents <br>
       &emsp;&emsp;&emsp;PopDensity <br>
       &emsp;&emsp;&emsp;Population <br>
-      6. Bar graphs? 
     </p>
 
     <p>
       For our full results and graphs, please refer to the outputs of the github under analysis/output, add the graphs there or run the corresponding scripts to get more graphs. You can also take a look at kmeans; it essentially separates the data a little lol and adds some nice colors. :) <br>
       &emsp;&emsp;&emsp;2DScatter - contains the 2DScatter plots <br>
       &emsp;&emsp;&emsp;3DScatter - contains the 3DScatter plots <br>
-      &emsp;&emsp;&emsp;kmeans - not using but worth adding for questions? <br>
-      &emsp;&emsp;&emsp;maps - contains the maps
+      &emsp;&emsp;&emsp;kmeans - contains clustering of data (not using) <br>
+      &emsp;&emsp;&emsp;maps - contains the maps of U.S.
     </p>
 
   </section>
@@ -67,10 +69,23 @@
     <!-- <h2 class="pageSubTitle">lee-lee-ho-ho</h2> -->
   </header>
   <section>
-    <p>We chose to use single and multiple regression to analyze the influence of population density and housing price on gun violence rates. Linear regression is a great tool for this task because it allows us to quantify how well our independent variables can explain the variation in the dependent variable through the r-squared value, and it also gives us insight into the nature of the relationship between each independent variable and the dependent variable through the coefficients of each term in the regression.  Through regression, we are also able to see expected gun violence rates for values of the housing price and population density that weren’t in our dataset. </p>
+    <p>We chose to use single and multiple regression to analyze the influence of population density and housing price on gun violence rates. Linear regression is a great tool for this task because it allows us to quantify how well our independent variables can explain the variation in the dependent variable through the r-squared value, and it also gives us insight into the nature of the relationship between each independent variable and the dependent variable through the coefficients of each term in the regression. Through regression, we are also able to see expected gun violence rates for values of the housing price and population density that weren’t in our dataset. </p>
+
+    <p>We did run into a few challenges during the linear regression. First, the outliers and different scales of our explanatory variables made it difficult to compare the effect that each of them had on the gun violence rate. To mitigate this, we dropped all of the data points that had values more than 3 standard deviations away from the mean for any of the explanatory variables. Then, in order to better interpret the coefficients of the explanatory variables, we normalized the values for each variable to be from 0 to 1. We found multiple regression to be quite successful, as it quantified the explanatory power of population density and housing price and it demonstrated the effect that they had on gun violence rates. 
+    </p>
 
     <p>Our data did not have protected attributes that could have affected our model. A protected attribute, under federal law, is legally protected from discrimination to prevent adverse action. This includes protected attributes such as race, gender, age, religion, sexual orientation, and socioeconomic status. While housing prices and population are potentially correlated with many protected attributes, neither contain any of these attributes.</p> 
 
+    <p>The results of our regression support our hypothesis that gun violence rates increase as housing prices go up. However, housing price was not a particularly strong indicator of gun violence rate. When we ran regression on all the cities that we had data for, using just housing price as an explanatory variable, we got an r-squared value of 0.046. In terms of the coefficient, we got a value of -8e-10 which suggests that the gun violence rate goes down by 8.0e-10 gun violence incidents per capita per year for every dollar that they average housing price goes up. This may not seem like a lot, but average housing prices varied on the order of hundreds of thousands of dollars. We also tried using the logarithm of the housing price and got a slightly higher r-squared value (0.054) which suggests that the relationship between these two variables may be more logarithmic than linear. 
+    </p>
+    <p>Regression using population density to explain gun violence rates did not support our hypothesis that gun violence rates would increase with population density. We found that with an r-squared value of 0.056, the gun violence rate goes down by 8.1e-08 incidents of gun violence per capita per year for every 1 person per square mile that the population density increases. However, when we only included cities of more than 10,000 people, the slope of the regression approached zero. Then, when we only included cities of more than 100,000 people, the slope of the regression actually became positive. The results of these three regressions indicate that gun violence rates tend to be higher in small rural areas than in large cities, but if you are only looking at large cities, the more densely packed ones tend to have a higher rate of gun violence.</p>
+    <p>We are fairly confident that the results of our regression are correct, and they align with our own understanding of our environment. </p>
+    <img src="images/regression/GVRate_HousingPrice_pop0_gvi0_z3.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/regression/GVRate_PopDensity_pop0_gvi0_z3.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    Multiple Regression Using All Cities
+    <img src="images/regression/GVRate_PopDensity_HousingPrice_pop0_gvi0_z3.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    Multiple Regression Using Cities with Population > 100,000
+    <img src="images/regression/GVRate_PopDensity_HousingPrice_pop100000_gvi0_z3.png" style="max-width:80%; max-height:80%; justify-content:center;">
   </section>
 </article>
 
@@ -80,10 +95,14 @@
     <!-- <h2 class="pageSubTitle"></h2> -->
   </header>
   <section>
-    <p>We chose to run a t-test because...</p>
+    <p>We decided to conduct T-tests to discern whether the data showed statistically significant differences in gun violence rates between low v.s. high home prices and low v.s. high population densities.In both cases, our two hypotheses take the form H0 for our null hypothesis and HA for our alternative hypothesis, and we set a significance value (ɑ) of 0.05. Our first t-test tests if there is a statistical difference in gun violence rates (number of gun violence incidents per person per year) between towns/cities with average housing prices under $300k and those with average housing prices over $300k. Our second t-test tests if there is a statistical difference in gun violence rates between town/cities with average population densities under 3,000 people per square mile and those with average population densities over 3,000 people per square mile. With both tests, we rejected the null hypotheses and accepted the null hypotheses. Thus, our t-tests have led us to believe that there are statistical differences in gun violence rate both between lower and higher housing prices in US cities, and between lower and higher population densities in US cities.
+    </p>
     
     <p>Some potential confounding variables we noticed were crime rates, gun availability, number of licenses, unemployment, age, gender, education, drug use, urbanization, ethnicity, strength of gun laws, family size, personality/behavior. Although numerous studies have shown these variables are implicitly correlated with socioeconomic status and therefore housing prices, we did not specifically take these into account when making predictions. 
     </p>
+
+    <p>In t-tests cases, we rejected the null hypotheses and accepted the alternative hypotheses. That is, our t-tests lead us to believe that there are statistical differences in gun violence rate both between lower and higher housing prices in US cities, and between lower and higher population densities in US cities. The extremity of our test statistics (16.6 and 17.1, when the upper critical value was around 1.96) was initially shocking, but after examining the strong relationship on full display in each of our 2D and 3D scatter plots that compare gun violence rates to housing prices and population densities for US cities, respectively, we decided that these t-test results seemed reasonable.
+      </p>
   </section>
 </article>
 
@@ -103,10 +122,9 @@
       Since there were a few outliers, we chose to just display points within 3 stddev from the center so we don’t end up with a large graph where the majority of the points were in one corner 
       There are also a lot of data points so maybe we should consider grouping the data somehow and maybe aggregating the points in some way<br><br>
       <b>Additional Explanation</b> <br>
-      The labels and titles should be fairly self-explanatory.
+      The labels and titles should be fairly self-explanatory. 
     </p>
-    <img src="images/3DScatter/3DScatter_HousingPrice%20over%20PopulationDensity_PopDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
-    <img src="images/3DScatter/3DScatter_HousingPrice_Population_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
+    <img src="images/3DScatter/3DScatter_HousingPrice_PopDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
   </section>
 </article>
 
@@ -128,10 +146,10 @@
       The labels and titles should be fairly self-explanatory 
     </p>
     <img src="images/2DScatter/2DScatter_HousingPrice_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
-    <img src="images/2DScatter/2DScatter_HousingPrice%20over%20PopulationDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
     <img src="images/2DScatter/2DScatter_PopDensity_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
     <img src="images/2DScatter/2DScatter_Population_GVRate.png" style="max-width:80%; max-height:80%; justify-content:center;">
-
+    
+  
   </section>
 </article>
 
@@ -163,30 +181,17 @@
 
 <article class="wrapper">
   <header>
-    <h1 class="pageTitle">Bar Graphs</h1>
-    <!-- <h2 class="pageSubTitle"></h2> -->
-  </header>
-  <section>
-    <p>
-      <b>Why</b> <br>
-      sdf <br><br>
-      <b>Alternatives</b>  <br>
-      sdf <br><br>
-      <b>Challenges</b>  <br>
-      sdf <br><br>
-      <b>Additional Explanation</b>  <br>
-      The labels and titles should be fairly self-explanatory. <br>
-    </p>
-  </section>
-</article>
-
-<article class="wrapper">
-  <header>
     <h1 class="pageTitle">Conclusion & Ethical Considerations</h1>
     <!-- <h2 class="pageSubTitle"></h2> -->
   </header>
   <section>
-    <p> Throughout the final project process, you will be expected to think critically and write about where your data is coming from, how you're analyzing and visualizing your data, and potential positive or negative consequences of your results.</p>
+    <p> Our data came from the GVA (Gun Violence Archive), a non profit database of every gun violence incident in the United States since 2013. It does not have any affiliation with advocacy organizations nor is an advocacy group, and its primary purpose is simply to accurately document and provide unbiased, unfiltered information to the public. <br> Because our data included no protected attributes, such as gender, age, race, socioeconomic status, and religion, our model and t-test should not include any bias, and our visualizations should simply reflect raw data and their correlations.
+
+    <br> The positive consequences of our results is that these newfound correlations can be used to confirm pre-existing relationships between different variables associated with gun violence, and hopefully we can use this analysis to predict and prevent future gun violence.
+
+    <br>Some negative consequences of our analysis are if people start treating the model as a reliable prediction of gun violence, which might drive away home owners from high probability gun violence areas. Furthermore, as this is a very sensitive and communal topic, we must be aware this algorithm may not consider all social and political aspects of the issue, either because the data is not sufficient enough or being used optimally. This may cause the algorithm to find certain correlations between factors in the data that do not represent the reality, which in turn provides false information.
+
+    </p>
   </section>
 </article>
 
@@ -200,10 +205,10 @@
 body {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
-    letter-spacing: 0.075em;
-    line-height: 1.7em;
+    letter-spacing: 1px;
+    line-height: 1.6em;
     font-weight: 300;
-    color: #444;
+    color: #555;
 }
 
 p {
@@ -226,8 +231,37 @@ header {
     font-size: 2em;
     font-weight: 700;
     /* line-height: 0em; */
-    line-height: 1.15;
-    margin: 25px 0;
+    line-height: 2em;
+}
+
+.pageSubTitle {
+    color: #333;
+    margin-bottom: 1em;
+    font-size: 1.4em;
+    font-weight: 300;
+}
+
+.background {
+    background: 
+        url("https://www.american.edu/programs/shared/data-science/images/datascience-og.jpg")
+        repeat;
+    background-size: 100% auto;
+    position: fixed;
+    width: 100%;
+    height: 300%;
+    top: 0;
+    left: 0;
+    z-index: -1
+}
+
+.wrapper {
+    width: 520px;
+    padding: 40px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow:  0px 3px 3px 1px rgba(0, 0, 0, 0.25);
+}
+</style>
 }
 
 .pageSubTitle {
