@@ -71,10 +71,10 @@ def visualize_pts(data, feature_columns=["","",""], additional_data=None):
         colors_s = []
         for d in additional_data:
             if d < 10000:
-                #print("red")
-                colors_s.append(cmap(0/MAX_VAL))
-            elif d > 10000 and d < 100000:
+                # print(cmap(0/MAX_VAL))
                 colors_s.append(cmap(2/MAX_VAL))
+            elif d > 10000 and d < 100000:
+                colors_s.append(cmap(1/MAX_VAL))
             else:
                 colors_s.append(cmap(3/MAX_VAL))
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # raw_data = raw_data.loc[raw_data['NumIncidents']>10]
 
     # add extra fields 
-    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
+    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population'] /4.25
     raw_data['HousingPrice over PopulationDensity'] = raw_data['HousingPrice'] / raw_data['PopDensity']
     raw_data['WaterPercent'] = raw_data['TotalArea'] - raw_data['LandArea'] / raw_data['TotalArea']
     
