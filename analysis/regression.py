@@ -209,7 +209,7 @@ if __name__ == "__main__":
     # use_vars = ['Killed', 'Injured', 'AvgKilled','AvgInjured', 'Population', 'Houses', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice', 'NumIncidents']
     # use_vars = ['AvgKilled','AvgInjured', 'Population', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice']
     # use_vars = ['Population', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice']
-    use_vars = ['PopDensity']
+    use_vars = ['LogHousingPrice']
     pred_var = "GVRate"
     output_path = "./output/regression/"
     min_pop = 0
