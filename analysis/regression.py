@@ -16,6 +16,7 @@ import json
 
 J_FILE_PATH = "./output/regression/2d/2d_results.json" 
 
+OUTPUT_PATH = ""
 def load_data(path, X_cols, y_col="GVRate", min_pop=10000, min_gvi=2, z_thresh=None):
     '''
     Loads in the cleaned gunviolence data and selects the 
@@ -50,13 +51,19 @@ def load_data(path, X_cols, y_col="GVRate", min_pop=10000, min_gvi=2, z_thresh=N
     # drop nans from results
     df = df.dropna(axis=0)
     all_cols = X_cols + [y_col]
-    df = df[all_cols]
-    # Calculate z-score for all data points (how many standard deviations away from mean) for each column
-    z = np.abs(stats.zscore(df))
+    print(all_cols)
+    # Calculate z-score for the data points we care about (how many standard deviations away from mean) for each column
+    z = np.abs(stats.zscore(df[all_cols]))
     # Find all the rows where all values in each row have a z-score less than 3
     if not z_thresh == None:
         ind = np.all((z < 3), axis=1)
+
+        # save the dropped vals for further analysis
+        dropped_vals = np.logical_not(ind)
+        df[dropped_vals].to_csv(OUTPUT_PATH)
+
         df = df[ind]
+
     X, y = df[X_cols].values, df[y_col].values
     return X, y
 
@@ -232,6 +239,9 @@ if __name__ == "__main__":
     output_path += "_gvi"+str(min_gvi)
     if not z_thresh == None:
         output_path += "_z" + str(z_thresh)
+    
+    OUTPUT_PATH = output_path  + ".csv"
+
     output_path += ".png"
     X,y = load_data(path, use_vars, y_col=pred_var, min_pop=min_pop,min_gvi=min_gvi, z_thresh=z_thresh)
     rsquared, intercept, coefficients, results, norm_elts = regression(X,y, normalize=norm)
@@ -267,7 +277,6 @@ if __name__ == "__main__":
         j_write.write(json.dumps(j_dict))
         j_write.close()
     
-
     viz_func(use_vars, pred_var, X,y,results, norm_elts=norm_elts, norm_viz=norm and not denorm,denormalize=denorm,o_path=output_path)
 
 
