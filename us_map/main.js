@@ -11,7 +11,7 @@ let filename = "county_agg.csv";
 ids_to_states = {};
 
 // initial field
-let curr_field = "HousingPrice";
+let curr_field = "PopDensity";
 
 // ---------------------------Map Setup---------------------------------
 // Static elements only
@@ -85,7 +85,7 @@ function countyColor(county, state, data, maxVal) {
                 goodColor[0],
                 goodColor[1],
                 goodColor[2],
-                data[i][curr_field] / maxVal,
+                (data[i][curr_field] / maxVal)*0.8 + 0.2,
             ];
             if (!(state in ids_to_states)) {
                 ids_to_states[state] = [];
@@ -112,7 +112,6 @@ updateMap();
 
 // going to make the num->state mapping manually
 
-// ids_to_states["fuck"] = "this shit";
 
 console.log(ids_to_states["11"]);
 console.log(Object.keys(ids_to_states));
@@ -140,4 +139,3 @@ const convertKeys = () => {
 };
 
 // // console.log()
-// console.log("alsjf")
