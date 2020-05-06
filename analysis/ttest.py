@@ -54,18 +54,35 @@ if __name__ == '__main__':
 
     # 3. Partition into two categories:
     # (a) HousingPrice, separated on a price of $300k
-    housing_300k_under = raw_data[raw_data['HousingPrice'] <= 300_000].dropna()['GVRate']
-    housing_300k_over = raw_data[raw_data['HousingPrice'] > 300_000].dropna()['GVRate']
+    housing_300k_under: pd.Series = raw_data[raw_data['HousingPrice'] <= 300_000].dropna()['GVRate']
+    housing_300k_over: pd.Series = raw_data[raw_data['HousingPrice'] > 300_000].dropna()['GVRate']
 
     # (b) PopDensity, separated on 3,000 people per sq mile
-    pop_density_3k_under = raw_data[raw_data['PopDensity'] <= 3_000].dropna()['GVRate']
-    pop_density_3k_over = raw_data[raw_data['PopDensity'] > 3_000].dropna()['GVRate']
+    pop_density_3k_under: pd.Series = raw_data[raw_data['PopDensity'] <= 3_000].dropna()['GVRate']
+    pop_density_3k_over: pd.Series = raw_data[raw_data['PopDensity'] > 3_000].dropna()['GVRate']
 
     # 4. Z-Test
     # TODO
     print('Housing Price (over $300k v.s. under $300k):')
     perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
+    print()
+
+    mean_gvrate_housing_300k_under = housing_300k_under.mean()
+    mean_gvrate_housing_300k_over = housing_300k_over.mean()
+    print(
+        f'Housing price under $300k, GV incidents per 1,000 ppl per year: {mean_gvrate_housing_300k_under * 1_000:6.5f}')
+    print(
+        f'Housing price over $300k, GV incidents per 1,000 ppl per year:  {mean_gvrate_housing_300k_over * 1_000:6.5f}')
 
     print()
+
     print('Population Density (over 3k people/sq mi vs under 3k people/sq mi):')
     perform_t_test(a=pop_density_3k_under, b=pop_density_3k_over, significance_level=0.05)
+    print()
+
+    mean_gvrate_pop_density_3k_under = pop_density_3k_under.mean()
+    mean_gvrate_pop_density_3k_over = pop_density_3k_over.mean()
+    print(
+        f'Population density under 3k, GV incidents per 1,000 ppl per year: {mean_gvrate_pop_density_3k_under * 1_000:6.5f}')
+    print(
+        f'Population density over 3k, GV incidents per 1,000 ppl per year:  {mean_gvrate_pop_density_3k_over * 1_000:6.5f}')
