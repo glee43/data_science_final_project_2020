@@ -11,7 +11,7 @@ let filename = "county_agg.csv";
 ids_to_states = {};
 
 // initial field
-let curr_field = "PopDensity";
+let curr_field = "NumIncidents";
 
 // ---------------------------Map Setup---------------------------------
 // Static elements only
@@ -50,6 +50,8 @@ function updateMap() {
                 .attr("class", "continent")
                 .attr("name", (d) => d.properties.NAME)
                 .attr("d", path)
+                .attr("stroke", "white")
+                .attr("stroke-width", 1)
                 .style("fill", (d) =>
                     countyColor(
                         d.properties.NAME,
