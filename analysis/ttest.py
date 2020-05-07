@@ -51,21 +51,46 @@ if __name__ == '__main__':
 
     # 2. Preprocess
     raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population']
+    mean_h = int(raw_data.dropna()['HousingPrice'].mean())
+    mean_d = int(raw_data.dropna()['PopDensity'].mean())
+    print(f'Mean Housing Price: ${mean_h}')
+    print(f'Mean Pop Density: {mean_d} people / sq mi\n\n')
+
+    cutoff_h = mean_h
+    cutoff_d = mean_d
+    # cutoff_h = 300_000
+    # cutoff_d = 3_000
 
     # 3. Partition into two categories:
-    # (a) HousingPrice, separated on a price of $300k
-    housing_300k_under = raw_data[raw_data['HousingPrice'] <= 300_000].dropna()['GVRate']
-    housing_300k_over = raw_data[raw_data['HousingPrice'] > 300_000].dropna()['GVRate']
+    # (a) HousingPrice, below/above cutoff_h
+    h_under_mean: pd.Series = raw_data[raw_data['HousingPrice'] <= cutoff_h].dropna()['GVRate']
+    h_over_mean: pd.Series = raw_data[raw_data['HousingPrice'] > cutoff_h].dropna()['GVRate']
 
-    # (b) PopDensity, separated on 3,000 people per sq mile
-    pop_density_3k_under = raw_data[raw_data['PopDensity'] <= 3_000].dropna()['GVRate']
-    pop_density_3k_over = raw_data[raw_data['PopDensity'] > 3_000].dropna()['GVRate']
+    # (b) PopDensity, below_above cutoff_d
+    d_under_mean: pd.Series = raw_data[raw_data['PopDensity'] <= cutoff_d].dropna()['GVRate']
+    d_over_mean: pd.Series = raw_data[raw_data['PopDensity'] > cutoff_d].dropna()['GVRate']
 
     # 4. Z-Test
     # TODO
-    print('Housing Price (over $300k v.s. under $300k):')
-    perform_t_test(a=housing_300k_under, b=housing_300k_over, significance_level=0.05)
-
+    print(f'Housing Price (over ${cutoff_h // 1000}k v.s. under ${cutoff_h // 1000}k):')
+    perform_t_test(a=h_under_mean, b=h_over_mean, significance_level=0.05)
     print()
-    print('Population Density (over 3k people/sq mi vs under 3k people/sq mi):')
-    perform_t_test(a=pop_density_3k_under, b=pop_density_3k_over, significance_level=0.05)
+
+    mean_gvrate_under_h_mean = h_under_mean.mean()
+    mean_gvrate_over_h_mean = h_over_mean.mean()
+    print(
+        f'Housing price under ${cutoff_h // 1000}k, GV incidents per 1,000 ppl per year: {mean_gvrate_under_h_mean * 1_000:6.5f}  ({h_under_mean.count()} cities)')
+    print(
+        f'Housing price over ${cutoff_h // 1000}k, GV incidents per 1,000 ppl per year:  {mean_gvrate_over_h_mean * 1_000:6.5f}  ({h_over_mean.count()} cities)')
+    print('\n')
+
+    print(f'Population Density (over {cutoff_d} people/sq mi vs under {cutoff_d} people/sq mi):')
+    perform_t_test(a=d_under_mean, b=d_over_mean, significance_level=0.05)
+    print()
+
+    mean_gvrate_under_d_mean = d_under_mean.mean()
+    mean_gvrate_over_d_mean = d_over_mean.mean()
+    print(
+        f'Population density under {cutoff_d}, GV incidents per 1,000 ppl per year: {mean_gvrate_under_d_mean * 1_000:6.5f}  ({d_under_mean.count()} cities)')
+    print(
+        f'Population density over {cutoff_d}, GV incidents per 1,000 ppl per year:  {mean_gvrate_over_d_mean * 1_000:6.5f}  ({d_over_mean.count()} cities)')
