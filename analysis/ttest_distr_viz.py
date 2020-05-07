@@ -9,11 +9,11 @@ hard_housing = 200000
 hard_pop = 1000
 hard_thresh = False
 drop_percentile = 100
-pop = False
+pop = True
 use_zeros = True
 
-pop_low = 500000
-pop_high = 10000000
+pop_low = 50000
+pop_high = 500000
 
 num_bins = 100
 
@@ -65,9 +65,9 @@ if __name__ == "__main__":
     field_title = "Population Density" if pop else "Housing Price"
 
 
-    fig, ax = plt.subplots(figsize=(15,9))
+    fig, ax = plt.subplots(figsize=(10,6))
     plt.xlim(hist_range)
-    ax.set_title(f'Distribution of Gun Violence Rates For Cities with Populations of {"{:,}".format(pop_low)}-{"{:,}".format(pop_high)} \n By High and Low {field_title}')
+    # ax.set_title(f'Distribution of Gun Violence Rates For Cities with Populations of {"{:,}".format(pop_low)}-{"{:,}".format(pop_high)} \n By High and Low {field_title}')
     ax.set_ylabel("Probability Density")
     ax.set_xlabel("Gun Violence Rates (Number of Incidents per 1,000 People per Year)")
     # ax.ylim()
