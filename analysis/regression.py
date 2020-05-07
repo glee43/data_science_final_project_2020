@@ -14,9 +14,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy import stats
 import json
 
-J_FILE_PATH = "./output/regression/2d/2d_results.json" 
+J_FILE_PATH = "./output/regression/2d/2d_results.json"
 
 OUTPUT_PATH = ""
+
+
 def load_data(path, X_cols, y_col="GVRate", min_pop=10000, min_gvi=2, z_thresh=None):
     '''
     Loads in the cleaned gunviolence data and selects the 
@@ -41,13 +43,17 @@ def load_data(path, X_cols, y_col="GVRate", min_pop=10000, min_gvi=2, z_thresh=N
 
     # add cols
     # calc gv as proportion of population
-    df["GVRate"] = df["NumIncidents"]/df["Population"]/4.25
+    df["GVRate"] = df["NumIncidents"]/df["Population"]/4.25 * 1000
     df["LogPop"] = np.log10(df["Population"])
     df["LogHousingPrice"] = np.log10(df["HousingPrice"])
     df["LogPopDensity"] = np.log10(df["PopDensity"])
+    df["HousingPrice"] = df["HousingPrice"] / 1000
+    df["PopDensity"] = df["PopDensity"] / 100
+
     # enforce minimum values
-    df = df.loc[df["Population"] >= min_pop,:]
-    df = df.loc[df["NumIncidents"] >= min_gvi,:]
+    df = df.loc[df["Population"] >= 50000, :]
+    df = df.loc[df["Population"] <= 500000, :]
+    df = df.loc[df["NumIncidents"] >= min_gvi, :]
     # drop nans from results
     df = df.dropna(axis=0)
     all_cols = X_cols + [y_col]
@@ -66,6 +72,7 @@ def load_data(path, X_cols, y_col="GVRate", min_pop=10000, min_gvi=2, z_thresh=N
 
     X, y = df[X_cols].values, df[y_col].values
     return X, y
+
 
 def regression(X, y, normalize=False):
     '''
@@ -101,9 +108,6 @@ def regression(X, y, normalize=False):
     return (rsquared, intercept, coefficients, results, norm_elts)
 
 
-
-
-
 def viz_regression_3d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm_viz=False, denormalize=False, o_path=None):
     '''
     Allows for the visualization of 3d regression
@@ -116,7 +120,7 @@ def viz_regression_3d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm
         X = (X-X_min)/X_denom
 
     zs = y
-    xs,ys = np.hsplit(X, 2)
+    xs, ys = np.hsplit(X, 2)
 
     # create points for surface drawing
     surf_x = np.linspace(np.min(xs), np.max(xs), res)
@@ -125,39 +129,40 @@ def viz_regression_3d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm
     flat_x = surf_x.flatten()
     flat_y = surf_y.flatten()
     # print(np.column_stack(surf_x,surf_y))
-    surf_z = model.predict(np.column_stack((np.ones(res**2),flat_x, flat_y)))
+    surf_z = model.predict(np.column_stack((np.ones(res**2), flat_x, flat_y)))
     surf_z = surf_z.reshape(surf_x.shape)
 
     if denormalize:
         y_min, y_denom, X_min, X_denom = norm_elts
-        norm_x = np.linspace(0,1,res)
-        norm_y = np.linspace(0,1,res)
+        norm_x = np.linspace(0, 1, res)
+        norm_y = np.linspace(0, 1, res)
         norm_x, norm_y = np.meshgrid(norm_x, norm_y)
         flat_norm_x = norm_x.flatten()
         flat_norm_y = norm_y.flatten()
-        surf_z = model.predict(np.column_stack((np.ones(res**2),flat_norm_x, flat_norm_y)))
+        surf_z = model.predict(np.column_stack((np.ones(res**2), flat_norm_x, flat_norm_y)))
         surf_z = (surf_z*y_denom) + y_min
         surf_z = surf_z.reshape(surf_x.shape)
-        
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    
-    ax.scatter(xs,ys,zs, c="#00cc00")
+
+    ax.scatter(xs, ys, zs, c="b", alpha=0.5, s=10, linewidths=0)
     # set axis labels
-    ax.set_xlabel(X_labels[0])
-    ax.set_ylabel(X_labels[1])
-    ax.set_zlabel(y_label)
+    ax.set_xlabel(X_labels[0] + "(Thousands USD)")
+    ax.set_ylabel(X_labels[1] + " (Population per Square Mile)")
+    ax.set_zlabel(y_label + " (Num Incidents per 1000 People per Year)")
 
-    ax.plot_surface(surf_x, surf_y, surf_z)
+    ax.plot_surface(surf_x, surf_y, surf_z, color="r", alpha=0.5)
 
-    title = f'Linear Regression of {y_label} on {X_labels[0]} and {X_labels[1]}'
+    title = f'Linear Regression of {X_labels[0]} and {X_labels[1]} vs {y_label}'
 
     plt.title(title)
     if not o_path == None:
         plt.savefig(o_path)
     plt.show()
 
-def viz_regression_2d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm_viz=False,denormalize=False, o_path=None):
+
+def viz_regression_2d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm_viz=False, denormalize=False, o_path=None):
     '''
     Allows for the visualization of 2d regression
     '''
@@ -172,37 +177,37 @@ def viz_regression_2d(X_labels, y_label, X, y, model, res=20, norm_elts=(), norm
 
     # create points for linear trend drawing
     lin_x = np.linspace(np.min(xs), np.max(xs), res)
-    lin_y = model.predict(np.column_stack((np.ones(res),lin_x)))
+    lin_y = model.predict(np.column_stack((np.ones(res), lin_x)))
     lin_y = lin_y.reshape(lin_x.shape)
-
 
     if denormalize:
         y_min, y_denom, X_min, X_denom = norm_elts
-        norm_x = np.linspace(0,1,res)
-        lin_y = model.predict(np.column_stack((np.ones(res),norm_x)))
+        norm_x = np.linspace(0, 1, res)
+        lin_y = model.predict(np.column_stack((np.ones(res), norm_x)))
         lin_y = (lin_y*y_denom) + y_min
         lin_y = lin_y.reshape(lin_x.shape)
-        
-    fig = plt.figure()
+
+    fig = plt.figure(figsize=(15, 5))
+
     ax = fig.add_subplot(111)
-    
-    ax.scatter(xs,ys, c="#00cc00")
-    plt.ylim(bottom = np.min(ys)*1.05, top = np.max(ys)*1.05)
+
+    ax.scatter(xs, ys, c="b", alpha=0.5, s=10, linewidths=0)
+    plt.ylim(bottom=np.min(ys)*1.05, top=np.max(ys)*1.05)
+
     # set axis labels
-    ax.set_xlabel(X_labels[0])
-    ax.set_ylabel(y_label)
+    ax.set_xlabel(X_labels[0] + " (Population per square mile)")
+    ax.set_ylabel(y_label + " (Num Incidents per 1000 People per Year)")
 
-    ax.plot(lin_x, lin_y)
+    ax.plot(lin_x, lin_y, c="r")
 
-    title = f'Linear Regression of {y_label} on {X_labels[0]}'
+    title = f'Linear Regression of {y_label} with population resticted to 50,000-500,000 on {X_labels[0]}'
 
     plt.title(title)
     if not o_path == None:
         plt.savefig(o_path)
-    
+
     plt.show()
 
-    
 
 if __name__ == "__main__":
     norm = False
@@ -216,7 +221,7 @@ if __name__ == "__main__":
     # use_vars = ['Killed', 'Injured', 'AvgKilled','AvgInjured', 'Population', 'Houses', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice', 'NumIncidents']
     # use_vars = ['AvgKilled','AvgInjured', 'Population', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice']
     # use_vars = ['Population', 'TotalArea', 'LandArea','PopDensity', 'HouseDensity', 'HousingPrice']
-    use_vars = ['LogHousingPrice']
+    use_vars = ['PopDensity']
     pred_var = "GVRate"
     output_path = "./output/regression/"
     min_pop = 0
@@ -239,19 +244,19 @@ if __name__ == "__main__":
     output_path += "_gvi"+str(min_gvi)
     if not z_thresh == None:
         output_path += "_z" + str(z_thresh)
-    
-    OUTPUT_PATH = output_path  + ".csv"
+
+    OUTPUT_PATH = output_path + ".csv"
 
     output_path += ".png"
-    X,y = load_data(path, use_vars, y_col=pred_var, min_pop=min_pop,min_gvi=min_gvi, z_thresh=z_thresh)
-    rsquared, intercept, coefficients, results, norm_elts = regression(X,y, normalize=norm)
+    X, y = load_data(path, use_vars, y_col=pred_var, min_pop=min_pop,
+                     min_gvi=min_gvi, z_thresh=z_thresh)
+    rsquared, intercept, coefficients, results, norm_elts = regression(X, y, normalize=norm)
     print("=============Results==============")
     print(f'R-Squared: {rsquared}')
     var_cos = list(zip(use_vars, coefficients))
     print("Coefficients")
     for pair in var_cos:
         print(f'\t{pair[0]} : {pair[1]}')
-
 
     if len(use_vars) == 1:
         # open json
@@ -276,8 +281,6 @@ if __name__ == "__main__":
         j_dict[vars_used][config]["b"] = intercept
         j_write.write(json.dumps(j_dict))
         j_write.close()
-    
-    viz_func(use_vars, pred_var, X,y,results, norm_elts=norm_elts, norm_viz=norm and not denorm,denormalize=denorm,o_path=output_path)
 
-
-
+    viz_func(use_vars, pred_var, X, y, results, norm_elts=norm_elts,
+             norm_viz=norm and not denorm, denormalize=denorm, o_path=output_path)

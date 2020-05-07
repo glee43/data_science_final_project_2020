@@ -49,9 +49,9 @@ def plt_top_5_and_bottom_5(data, feature_columns=["", "", ""], min_pop="", max_p
     largest = data.nlargest(5, feature_columns[0])
     smallest = data.nsmallest(5, feature_columns[0])
     data = pd.concat([largest, smallest])
-
+    print(data)
     x = np.arange(10)
-    y = data[feature_columns[1]].values.tolist()
+    y = np.multiply(data[feature_columns[1]].values.tolist(), 1000)
 
     x_label = []
 
@@ -59,7 +59,8 @@ def plt_top_5_and_bottom_5(data, feature_columns=["", "", ""], min_pop="", max_p
         row_data = row[1]
         display_str = row_data['City'] + ", " + \
             row_data['State'] + "\n" + feature_columns[0] + \
-            ":\n" + str(round(row_data[feature_columns[0]], 6)) + \
+            ":\n" + str("{:,}".format(round(row_data[feature_columns[0]]))) + \
+            "\n#Incidents: " + str("{:,}".format(round(row_data['NumIncidents']), 0)) + \
             "\nPopulation:\n" + str("{:,}".format(round(row_data['Population']), 0))
 
         x_label.append(display_str)
@@ -68,22 +69,22 @@ def plt_top_5_and_bottom_5(data, feature_columns=["", "", ""], min_pop="", max_p
 
     # create a new figure
 
-    plt.figure(figsize=(20, 10))
-    print(y)
+    plt.figure(figsize=(20, 12))
+
     bargraph = plt.bar(x, y, align='center', alpha=0.5)
 
-    for i in range(0, 5, 1):
+    for i in range(5, 10, 1):
         bargraph[i].set_color('r')
 
     plt.xticks(x, x_label)
-    plt.ylabel(feature_columns[1])
+    plt.ylabel(feature_columns[1] + " (Num Incidents per 1000 People per Year)")
     plt.grid(True)
 
     plot_name = "/Top_5_and_Bottom_5_with_Pop_>_" + min_pop + "_and_<_" + max_pop+"_BarGraph" + \
         "_" + feature_columns[0] + "_" + feature_columns[1]
 
     # add title
-
+    plt.ylim(top=3.5)
     plt.title("Top 5 and Bottom 5 " + feature_columns[0] +
               " with Population > " + min_pop + " and < " + max_pop + " vs " + feature_columns[1])
 
@@ -164,26 +165,38 @@ if __name__ == '__main__':
     # 5 states with the lowest rates of gun violence
     # raw_data = raw_data.loc[(raw_data['State'] == 'ma') | (raw_data['State'] == 'ri') |(raw_data['State'] == 'ny') | (raw_data['State'] == 'nj') | (raw_data['State'] == 'ct')]
 
-    min_pop = 1000
-    max_pop = 50000
+    min_pop_list = [1000, 50000, 100000, 500000, 1000000]
+    max_pop_list = [50000, 100000, 500000, 1000000, 10000000]
 
-    # only get data where the population is greater than 10,000
-    raw_data = raw_data.loc[raw_data['Population'] > min_pop]
-    raw_data = raw_data.loc[raw_data['Population'] < max_pop]
-    raw_data = raw_data.loc[raw_data['NumIncidents'] > 0]
+    for i in range(5):
+        min_pop = min_pop_list[i]
+        max_pop = max_pop_list[i]
+        print(min_pop)
+        print(max_pop)
+        # only get data where the population is greater than 10,000
+        raw_data = raw_data.loc[raw_data['Population'] > min_pop]
+        raw_data = raw_data.loc[raw_data['Population'] < max_pop]
+        raw_data = raw_data.loc[raw_data['NumIncidents'] > 0]
 
-    # add extra fields
-    raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population'] / 4.25
-    raw_data = raw_data.loc[raw_data['GVRate'] > 0]
-    raw_data['HousingPrice over PopulationDensity'] = raw_data['HousingPrice'] / raw_data['PopDensity']
-    raw_data['WaterPercent'] = raw_data['TotalArea'] - raw_data['LandArea'] / raw_data['TotalArea']
+        # add extra fields
+        raw_data['GVRate'] = raw_data['NumIncidents'] / raw_data['Population'] / 4.25
+        raw_data = raw_data.loc[raw_data['GVRate'] > 0]
+        raw_data['HousingPrice over PopulationDensity'] = raw_data['HousingPrice'] / \
+            raw_data['PopDensity']
+        raw_data['WaterPercent'] = raw_data['TotalArea'] - \
+            raw_data['LandArea'] / raw_data['TotalArea']
 
-    # change to explore the two fields
-    feature_columns = ['NumIncidents', "HousingPrice"]
-    data = raw_data
+        print("raw_data \n")
+        print(raw_data)
 
-    # uncomment out to create
-    plt_top_5_and_bottom_5(data, feature_columns=feature_columns,
-                           min_pop="{:,}".format(min_pop), max_pop="{:,}".format(max_pop))
-    # plt_top_10(data, feature_columns=feature_columns, large_or_small="large")
-    # plt_top_10(data, feature_columns=feature_columns, large_or_small="small")
+        # change to explore the two fields
+        feature_columns = ['HousingPrice', "GVRate"]
+        data = raw_data
+
+        # uncomment out to create
+        plt_top_5_and_bottom_5(data, feature_columns=feature_columns,
+                               min_pop="{:,}".format(min_pop), max_pop="{:,}".format(max_pop))
+        # plt_top_10(data, feature_columns=feature_columns, large_or_small="large")
+        # plt_top_10(data, feature_columns=feature_columns, large_or_small="small")
+        with open(data_path) as data_file:
+            raw_data = pd.read_csv(data_file)
